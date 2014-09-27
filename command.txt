@@ -1,0 +1,3 @@
+python grid.py -log2c -5,15,2 -log2g -14,2,2 -v 5 -s 3 -q training_data_54
+
+cd D:\Dropbox\學業\大四上\專題\ICASSP_cup

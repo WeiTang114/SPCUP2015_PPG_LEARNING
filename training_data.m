@@ -4,9 +4,9 @@ load('fft_features.mat');
 use_feature = 2;
 f = fopen('training_data_54','w+');
 
-count = size(ground_truth,1);
-dim = size(features,3);
-for c = 1 : count
+win_count = size(ground_truth,1);  % 728
+dim = size(features,3);            % 27 (frequency)
+for c = 1 : win_count
     fprintf(f,'%f',ground_truth(c,1));
     dim_count = 0;
     for u = 1 : use_feature

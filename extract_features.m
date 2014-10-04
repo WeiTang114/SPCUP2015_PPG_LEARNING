@@ -12,3 +12,4 @@ for i = data_idxes
    save('features.mat',sprintf('features%d', i), '-append');
 end
 
+clearvars data_idxes features ground_truth i sig win_count

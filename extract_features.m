@@ -3,13 +3,19 @@
 
 data_idxes = 1:5;
 
+filename = 'features.mat';
+if (exist(filename, 'file') == 0)
+   save(filename); 
+end
+
 for i = data_idxes
    [sig, ground_truth] = get_data(i);
    win_count = size(ground_truth,1);
    [~,features] = fft_feature(ground_truth, sig);
    %features 3D: (window, channel, feature(frequency))
-   eval(sprintf('features%d = features', i));
-   save('features.mat',sprintf('features%d', i), '-append');
+   eval(sprintf('features%d = features;', i));
+   fprintf(1,'save features%d\n', i); % display formatted string
+   save(filename,sprintf('features%d', i), '-append');
 end
 
-clearvars data_idxes features ground_truth i sig win_count
+clearvars data_idxes features ground_truth i sig win_count filename

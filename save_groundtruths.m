@@ -1,4 +1,8 @@
-data_idxes = 1:5;
+my_global;
+
+if exist('g_data_idxes', 'var') == 0
+    g_data_idxes = 1:12;
+end
 
 filename = 'ground_truths.mat';
 if (exist(filename, 'file') == 0)

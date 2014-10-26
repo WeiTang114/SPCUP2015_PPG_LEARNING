@@ -1,4 +1,4 @@
-python gridregression.py -log2c -5,15,2 -log2g -14,2,2 -v 5 -s 3 -t 2 -q training_data_54
+﻿python gridregression.py -log2c -5,15,2 -log2g -14,2,2 -v 5 -s 3 -t 2 -q training_data_54
 
 cd D:\Dropbox\學業\大四上\專題\ICASSP_cup
 
@@ -11,3 +11,7 @@ svm-train -s 3 -t 2 -v 5 -q -c 2048 -g 0.01 training_data_54
 
 gridregression.py output:512.0 0.015625 0.0625 65.0086
 svm-train -s 3 -t 2 -v 5 -q -c 512 -g 0.015625 -p 0.0625 training_data_54
+
+
+
+c:32768.000000, gamma:0.015625

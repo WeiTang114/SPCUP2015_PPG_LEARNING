@@ -1,14 +1,18 @@
 % This extract features from every file of data, and
 % store the features seperately into a file "features.mat"
 
-data_idxes = 1:5;
+my_global;
 
+if exist('g_data_idxes', 'var') == 0
+    g_data_idxes = 1:12;
+end
+    
 filename = 'features.mat';
 if (exist(filename, 'file') == 0)
    save(filename); 
 end
 
-for i = data_idxes
+for i = g_data_idxes
    [sig, ground_truth] = get_data(i);
    win_count = size(ground_truth,1);
    [~,features] = fft_feature(ground_truth, sig);

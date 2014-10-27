@@ -1,5 +1,5 @@
 function [mse, corr_coeff] = my_svm_predict(model_file, output_file, indexes)
-    if (nargin < 4)
+    if (nargin < 3)
         indexes = 1:12;
     end
 

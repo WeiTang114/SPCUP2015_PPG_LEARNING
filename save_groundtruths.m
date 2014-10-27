@@ -9,7 +9,7 @@ if (exist(filename, 'file') == 0)
    save(filename); 
 end
 
-for i = data_idxes
+for i = g_data_idxes
    [sig, ground_truth] = get_data(i);
    eval(sprintf('ground_truth%d = ground_truth;', i));
    save(filename,sprintf('ground_truth%d', i), '-append');

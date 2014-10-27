@@ -1,4 +1,17 @@
-function [mse, corr_coeff] = my_svm_predict(model_file, output_file, indexes)
+function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_file, indexes)
+% my_svm_predict calls libsvm to predict the input data.
+%
+% usage: 
+%   [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_file, indexes)
+% input: 
+%   model_file    the .model file created by my_svm_predict
+%   predict_file  new file name, stores formatted libsvm-format data
+%   output_file   new file name, stores the output of svm-predict
+%   indexed       the indexes vector to be predicted, e.g. [1:5], [12]
+% output:
+%   mse           mean-square error
+%   corr_coeff    the square of correlation coeffient(corr^2)
+
     if (nargin < 3)
         indexes = 1:12;
     end
@@ -8,7 +21,6 @@ function [mse, corr_coeff] = my_svm_predict(model_file, output_file, indexes)
     load('features.mat');
     load('ground_truths.mat');
 
-    predict_file = 'tang_predict_54';
     features = [];
     ground_truths = [];
     f = fopen(predict_file, 'w+');

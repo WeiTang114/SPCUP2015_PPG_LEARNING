@@ -16,15 +16,15 @@ end
 training_filename = 'tang_training_data_54';
 f = fopen(training_filename, 'w+');
 for i = g_data_idxes
-    eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, 5)', i, i)); 
+    eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i)); 
 end
 fclose(f);
 
-logC_s = -5;
+logC_s = 1;
 logC_b = 15;
 logC_step = 2;
 logG_s = -14;
-logG_b = 2;
+logG_b = 1;
 logG_step = 2;
 
 results = [];

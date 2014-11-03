@@ -1,4 +1,4 @@
-function my_plot_func(topre_file, out_file, fig_file)
+function [] = my_plot_func(topre_file, out_file, fig_file)
 
     predictfname = out_file;
     inputfname = topre_file;

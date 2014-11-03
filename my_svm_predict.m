@@ -39,10 +39,10 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
     end
     
     disp (cmdout);
-    mse = 0;
-    corr_coeff = 0;
     
-    
+    resultscell = regexp(cmdout, '[0-9.]*', 'match');
+    mse = str2num(char(resultscell(1)));
+    corr_coeff = str2num(char(resultscell(2)));
 end
  
  

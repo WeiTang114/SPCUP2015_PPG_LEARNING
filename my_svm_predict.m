@@ -38,6 +38,11 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
         return;
     end
     
+    
+    % test tracking
+    temporal_track(output_file);
+    
+    
     disp (cmdout);
     
     resultscell = regexp(cmdout, '[0-9.]*', 'match');
@@ -45,4 +50,37 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
     corr_coeff = str2num(char(resultscell(2)));
 end
  
+
+function temporal_track(output_file)
+    DELTA = 7;
+    TAU = 2;
+
+    f = fopen(output_file, 'r');
+    f_new = fopen(sprintf('%s.new', output_file), 'w+');
+    
+    line = fgetl(f);
+    lastval = -1;
+    while ischar(line)
+        val = str2double(line);
+        if lastval > 0
+            diff = val - lastval;
+            if diff > DELTA
+                val = lastval + TAU;
+            elseif diff < -1 * DELTA
+                val = lastval - TAU;
+            end
+        end
+    
+        fprintf(f_new, '%f\n', val);
+        lastval = val;
+        line = fgetl(f);
+    end
+   
+    % TODO: calculate correlation coefficient
+    
+    fclose(f);
+    fclose(f_new);
+end
+
+
  

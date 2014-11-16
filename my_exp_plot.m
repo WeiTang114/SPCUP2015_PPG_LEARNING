@@ -23,7 +23,7 @@ for logC = logC_s : logC_step : logC_b
  
         corr_sum = 0;
         aae_sum = 0;
-
+        
         for i = 1:12
             fprintf(1, '\nTest %d\n', i);
             train_idxes = indexes_all( ~ismember( indexes_all, i ) );
@@ -44,17 +44,33 @@ for logC = logC_s : logC_step : logC_b
             [mse_track, corr_track, aae_track, output_file_track] = ...
                     my_mod_track(predict_file, output_file);
                 
-                
+            [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
+                    my_window_smooth(predict_file, output_file_track);
+              
+            %{
             mse = mse_track;
             corr = corr_track;
             avg_abs_err = aae_track;
+            %}
+            mse = mse_smooth;
+            corr = corr_smooth;
+            avg_abs_err = aae_smooth;
             
-            my_plot_func(predict_file, output_file_track, fig_file);
+            % plot
+            my_plot_func(predict_file, output_file_smooth, fig_file);
 
+            % save results to file
             fprintf(f, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);
-            fprintf(f, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);    
+            fprintf(f, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
+            fprintf(f, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth);      
+            
+            % print results
+            fprintf(1, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);
+            fprintf(1, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
+            fprintf(1, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth); 
             
             fprintf(1, 'result : mse %f , corr %f , avg_abs_err = %f\n', mse, corr, avg_abs_err);
+            
             corr_sum = corr_sum + corr;
             aae_sum = aae_sum + avg_abs_err;
         end

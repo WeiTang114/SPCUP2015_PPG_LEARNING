@@ -21,8 +21,6 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
     load('features.mat');
     load('ground_truths.mat');
 
-    features = [];
-    ground_truths = [];
     f = fopen(predict_file, 'w+');
     for i = indexes
         eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
@@ -38,11 +36,10 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
         return;
     end
     
-    disp (cmdout);
-    
+    %original mse and corr
     resultscell = regexp(cmdout, '[0-9.]*', 'match');
-    mse = str2num(char(resultscell(1)));
-    corr_coeff = str2num(char(resultscell(2)));
+    mse = str2double(char(resultscell(1)));
+    corr_coeff = str2double(char(resultscell(2)));
+    
+    fprintf(1, 'predict : mse %f , corr %f\n', mse, corr_coeff);
 end
- 
- 

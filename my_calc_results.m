@@ -1,4 +1,4 @@
-function [mse, corr] = calc_results(target_file, out_file)
+function [mse, corr] = my_calc_results(target_file, out_file)
     ft = fopen(target_file);
     fp = fopen(out_file);
      

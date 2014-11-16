@@ -21,8 +21,6 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
     load('features.mat');
     load('ground_truths.mat');
 
-    features = [];
-    ground_truths = [];
     f = fopen(predict_file, 'w+');
     for i = indexes
         eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
@@ -38,25 +36,29 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
         return;
     end
     
-    
     % test tracking
-    temporal_track(output_file);
+    output_file_new = temporal_track(output_file);
     
-    
-    disp (cmdout);
-    
+    %original mse and corr
     resultscell = regexp(cmdout, '[0-9.]*', 'match');
-    mse = str2num(char(resultscell(1)));
-    corr_coeff = str2num(char(resultscell(2)));
+    mse = str2double(char(resultscell(1)));
+    corr_coeff = str2double(char(resultscell(2)));
+    
+    %new mse and corr
+    [mse_new, corr_new] = calc_results(predict_file, output_file_new);
+    
+    fprintf(1, 'original : mse %f , corr %f\n', mse, corr_coeff);
+    fprintf(1, 'tracked  : mse %f , corr %f\n', mse_new, corr_new);
 end
  
 
-function temporal_track(output_file)
+function output_file_new = temporal_track(output_file)
     DELTA = 7;
     TAU = 2;
 
     f = fopen(output_file, 'r');
-    f_new = fopen(sprintf('%s.new', output_file), 'w+');
+    output_file_new = sprintf('%s.new', output_file);
+    f_new = fopen(output_file_new, 'w+');
     
     line = fgetl(f);
     lastval = -1;
@@ -83,4 +85,42 @@ function temporal_track(output_file)
 end
 
 
- 
+function [mse, corr] = calc_results(target_file, out_file)
+    ft = fopen(target_file);
+    fp = fopen(out_file);
+     
+    error = 0;
+    sump = 0;
+    sumt = 0;
+    sumpp = 0;
+    sumtt = 0;
+    sumpt = 0;
+    total = 0;
+    
+    linet = fgetl(ft);
+    while ischar(linet)
+        linep = fgetl(fp);
+        
+        cellt = regexp(linet, '[0-9.]*', 'match');
+        labelt = str2double(char(cellt(1)));
+        labelp = str2double(linep);
+        
+        error = error + (labelp - labelt)^2;
+        sump = sump + labelp;
+        sumt = sumt + labelt;
+        sumpp = sumpp + labelp^2;
+        sumtt = sumtt + labelt^2;
+        sumpt = sumpt + labelp * labelt;
+        total = total + 1;
+        
+        linet = fgetl(ft);
+    end
+
+    fclose(ft);
+    fclose(fp);
+    
+    mse = error / total;
+    corr = ((total * sumpt - sump * sumt)^2) / ((total * sumpp - sump^2) * (total * sumtt - sumt^2));
+    
+end
+

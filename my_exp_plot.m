@@ -32,10 +32,19 @@ for logC = logC_s : logC_step : logC_b
             output_file = sprintf('exp\\my_out_%d', i);
             fig_file = sprintf('plot_%d', i);
       
-            model_file = my_svm_train(training_file, c, gamma, train_idxes);
-            [mse_predict, corr_predict] = my_svm_predict(model_file, predict_file, output_file, i);
-            [~, ~, output_file_track] = my_mod_track(predict_file, output_file);
-            [mse_track, corr_track, aae_track] = my_calc_results(predict_file, output_file_track);
+            %train
+            model_file = ...
+                    my_svm_train(training_file, c, gamma, train_idxes);
+            
+            %predict
+            [mse_predict, corr_predict] = ...
+                    my_svm_predict(model_file, predict_file, output_file, i);
+                
+            %temporal track
+            [mse_track, corr_track, aae_track, output_file_track] = ...
+                    my_mod_track(predict_file, output_file);
+                
+                
             mse = mse_track;
             corr = corr_track;
             avg_abs_err = aae_track;

@@ -1,4 +1,4 @@
-function [mse, corr_coeff, output_file_new] = my_mod_track(predict_file, output_file)
+function [mse, corr_coeff, aae, output_file_new] = my_mod_track(predict_file, output_file)
 % my_mod_track does the task of temporal tracking after prediction is
 % finished. 
 % input:
@@ -6,6 +6,7 @@ function [mse, corr_coeff, output_file_new] = my_mod_track(predict_file, output_
 %   output_file: the output of svm-predict, the same as output_file for my_svm_predict.  
 % return:
 %   modified mse and corr_coeff^2
+%   aae: avg abs error
 %   output_file_new: modified output_file
 
     DELTA = 7;
@@ -38,5 +39,5 @@ function [mse, corr_coeff, output_file_new] = my_mod_track(predict_file, output_
     
     
     %new mse and corr
-    [mse, corr_coeff] = my_calc_results(predict_file, output_file_new);
+    [mse, corr_coeff, aae] = my_calc_results(predict_file, output_file_new);
 end

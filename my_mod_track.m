@@ -39,5 +39,4 @@ function [mse, corr_coeff, output_file_new] = my_mod_track(predict_file, output_
     
     %new mse and corr
     [mse, corr_coeff] = my_calc_results(predict_file, output_file_new);
-    fprintf(1, 'track : mse %f , corr %f\n', mse, corr_coeff);
 end

@@ -1,4 +1,13 @@
-function [mse, corr] = my_calc_results(target_file, out_file)
+function [mse, corr, avg_abs_err] = my_calc_results(target_file, out_file)
+% my_calc_results calculates results according to the input files.
+% input:
+%     target_file: the svm predict input file
+%     out_file: the svm prediction output file
+% return:
+%     mse: mean square error
+%     corr: correlation coeffiecient^2
+%     avg_abs_arr: = (sum(BPMest(i) - BPMtrue(e)) / N)
+
     ft = fopen(target_file);
     fp = fopen(out_file);
      
@@ -9,6 +18,7 @@ function [mse, corr] = my_calc_results(target_file, out_file)
     sumtt = 0;
     sumpt = 0;
     total = 0;
+    abserr = 0;
     
     linet = fgetl(ft);
     while ischar(linet)
@@ -25,6 +35,7 @@ function [mse, corr] = my_calc_results(target_file, out_file)
         sumtt = sumtt + labelt^2;
         sumpt = sumpt + labelp * labelt;
         total = total + 1;
+        abserr = abserr + abs(labelt - labelp);
         
         linet = fgetl(ft);
     end
@@ -34,5 +45,5 @@ function [mse, corr] = my_calc_results(target_file, out_file)
     
     mse = error / total;
     corr = ((total * sumpt - sump * sumt)^2) / ((total * sumpp - sump^2) * (total * sumtt - sumt^2));
-    
+    avg_abs_err = abserr / total;
 end

@@ -30,12 +30,17 @@ for logC = logC_s : logC_step : logC_b
             predict_file = sprintf('exp\\my_predict_%d', i);
             output_file = sprintf('exp\\my_out_%d', i);
             fig_file = sprintf('plot_%d', i);
+      
             model_file = my_svm_train(training_file, c, gamma, train_idxes);
-            [mse, corr] = my_svm_predict(model_file, predict_file, output_file, i);
+            [mse_predict, corr_predict] = my_svm_predict(model_file, predict_file, output_file, i);
+            [mse_track, corr_track, output_file] = my_mod_track(predict_file, output_file);
+            mse = mse_track;
+            corr = corr_track;
+            
             my_plot_func(predict_file, output_file, fig_file);
-            my_plot_func(predict_file, sprintf('%s.new', output_file), sprintf('%s_new', fig_file));
 
-            fprintf(f, 'predict %d:mse = %f , corr = %f\n', i, mse, corr);
+            fprintf(f, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);
+            fprintf(f, 'tracked %d:mse = %f , corr = %f\n', i, mse_track, corr_track);
             corr_sum = corr_sum + corr;
         end
 

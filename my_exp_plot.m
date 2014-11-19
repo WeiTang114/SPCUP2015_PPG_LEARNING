@@ -57,7 +57,7 @@ for logC = logC_s : logC_step : logC_b
             avg_abs_err = aae_smooth;
             
             % plot
-            my_plot_func(predict_file, output_file_smooth, fig_file);
+            my_plot_func(fig_file, predict_file, output_file, output_file_track, output_file_smooth);
 
             % save results to file
             fprintf(f, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);

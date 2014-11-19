@@ -45,7 +45,7 @@ for logC = logC_s : logC_step : logC_b
                     my_mod_track(predict_file, output_file);
                 
             [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
-                    my_window_smooth(predict_file, output_file_track);
+                    my_mod_window_smooth(predict_file, output_file_track);
               
             %{
             mse = mse_track;

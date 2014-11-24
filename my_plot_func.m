@@ -47,6 +47,12 @@ function [] = my_plot_func(fig_file, topre_file, out_file, varargin)
         winps = [winps, winp];
     end
     
+    fclose(ft);
+    for i = 1: n_out_files
+        fclose(fps(i));
+    end
+    
+    
     x = linspace(0, 100, size(wint,2));
     
     
@@ -57,6 +63,10 @@ function [] = my_plot_func(fig_file, topre_file, out_file, varargin)
     plotdata(3:3:end) = {'.-'};
     plot(plotdata{:});
     
+    %set figure size
+    hFig = figure(1);
+    set(hFig, 'Position', [100 0 900 600])
+    
     % legend
     legenddata = cell(n_out_files, 1);
     for t = 1: n_out_files 
@@ -66,6 +76,6 @@ function [] = my_plot_func(fig_file, topre_file, out_file, varargin)
     set(lgnd, 'color', 'none');
     
     % save figures as a .fig and a .png
-    saveas(gcf, sprintf('plot\\%s',fig_file), 'png');
-    saveas(gcf, sprintf('plot\\%s',fig_file), 'fig');
+    saveas(gcf, fig_file, 'png');
+    saveas(gcf, fig_file, 'fig');
 end

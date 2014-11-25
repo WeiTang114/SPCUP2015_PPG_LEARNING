@@ -1,10 +1,11 @@
- function [mse, corr, aae, output_file_new] = my_mod_window_smooth(predict_file, output_file, window_dist, varargin)
+ function [mse, corr, aae, output_file_new] = my_mod_window_smooth(predict_file, output_file, window_dist, window_size, varargin)
 % my_window_smooth does the task of sliding window smoothing after prediction is
 % finished. 
 % input:
 %   predict_file: the file to predict, created by my_svm_predict
 %   output_file: the output of svm-predict(or tracking), the same as output_file for my_svm_predict.  
 %   window_dist: 'uniform' or 'gaussian'
+%   window_size: size of the window
 %   varargin: 
 %       1. sdtype: 'd1' for [sd = len of window / 1] and so on. 'd1', 'd2'
 %                   , ..., 'd6' are supported.
@@ -19,7 +20,6 @@
 %       [x x x i x x x] : M 7
 %       [x x x x x x i] : L 7
 %       [i x x x x x x] : R 7
-    window_size = 15;
     
     window_type = 'M';   % the index is at the middle of the window
     % window_type = 'L'     % window is at the left of the index
@@ -32,6 +32,7 @@
     output_file_new = sprintf('%s.winsmooth', output_file);
     f_new = fopen(output_file_new, 'w+');
     
+    % read output values line by line
     line = fgetl(f);
     while ischar(line)
         val = str2double(line);
@@ -39,6 +40,7 @@
         line = fgetl(f);
     end
     
+    % go window!
     for i = 1:size(vector, 2)
         window = sliding_window(vector, i, window_size, window_type);
         

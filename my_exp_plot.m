@@ -4,18 +4,32 @@ load('features.mat');
 load('ground_truths.mat');
 indexes_all = 1:12;
 
+% parameters
 c = 2048;
 gamma = 0.00625;
+window_dist = 'uniform';  % 'gaussian'
+window_size = 15;
+window_gau_sdtype = 'd2';
 
+% window_str to be shown in the name of the exp
+if window_dist == 'uniform'
+    window_str = window_dist;
+elseif window_dist == 'gaussian'
+    window_str = sprintf('gaussian_%s', window_gau_sdtype);
+end
+
+% for storing results
 results = [];
 corr_sum = 0;
 aae_sum = 0;
 
+% directories
 exp_root_dir = 'exp';
 date = datestr(now, 'yyyymmdd_HHMMSS');
 
-%exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>__<date>
-exp_name = sprintf('%f_%f_t7_2_s13_gau_d3__%s', c, gamma, date);
+
+%exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
+exp_name = sprintf('%f_%f_t7_2_s%d_%s__%s', c, gamma, window_size, window_str, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
 mkdir(exp_dir);
@@ -27,6 +41,7 @@ resf = fopen(sprintf('%s\\results.txt', exp_dir), 'w+');
 fprintf(1, 'Experiment starting: %s\n\n', exp_name);
 
 for i = 1:12
+    
     fprintf(1, '\nTest %d\n', i);
     train_idxes = indexes_all( ~ismember( indexes_all, i ) );
     training_file = sprintf('%s\\my_train_no_%d', tmp_dir, i);
@@ -48,7 +63,7 @@ for i = 1:12
 
     %window_smooth
     [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
-            my_mod_window_smooth(predict_file, output_file_track, 'gaussian', 'd3');
+            my_mod_window_smooth(predict_file, output_file_track, window_dist, window_size, window_gau_sdtype);
 
     %{
     mse = mse_track;
@@ -84,6 +99,7 @@ fprintf(1, 'c = %f, gamma = %f,  Average abs error = %f BPM\n', c, gamma, aae_su
 fprintf(resf, 'c = %f, gamma = %f,  Average abs error = %f BPM\n', c, gamma, aae_sum / 12);
 
 fclose(resf);
+fclose all;
 
 fprintf(1, sprintf('Exp: %s succeeded!\n', exp_name));
 exp_dir_succ = sprintf('%s__succ', exp_dir);

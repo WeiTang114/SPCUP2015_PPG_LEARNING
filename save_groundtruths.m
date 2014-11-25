@@ -6,7 +6,8 @@ end
 
 filename = 'ground_truths.mat';
 if (exist(filename, 'file') == 0)
-   save(filename); 
+    % create a new empty mat file
+    save(filename, ''); 
 end
 
 for i = g_data_idxes
@@ -14,7 +15,9 @@ for i = g_data_idxes
     % check if the ground_truths exists
     gt_i = sprintf('ground_truth%d', i);
     eval(sprintf('global %s', gt_i));
-    if exist(gt_i, 'var')  ~= 0
+    
+    % check if the global variable has been defined(size != 0)
+    if size(eval(gt_i), 2) ~= 0
         continue;
     end
     

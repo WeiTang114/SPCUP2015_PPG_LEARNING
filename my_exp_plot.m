@@ -15,7 +15,7 @@ exp_root_dir = 'exp';
 date = datestr(now, 'yyyymmdd_HHMMSS');
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>__<date>
-exp_name = sprintf('%f_%f_t7_2_s11__%s', c, gamma, date);
+exp_name = sprintf('%f_%f_t7_2_s13_gau_d3__%s', c, gamma, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
 mkdir(exp_dir);
@@ -48,7 +48,7 @@ for i = 1:12
 
     %window_smooth
     [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
-            my_mod_window_smooth(predict_file, output_file_track);
+            my_mod_window_smooth(predict_file, output_file_track, 'gaussian', 'd3');
 
     %{
     mse = mse_track;

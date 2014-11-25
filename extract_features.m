@@ -9,7 +9,8 @@ end
     
 filename = 'features.mat';
 if (exist(filename, 'file') == 0)
-   save(filename); 
+    % create a new empty mat file
+    save(filename, '');  
 end
 
 for i = g_data_idxes
@@ -17,7 +18,9 @@ for i = g_data_idxes
     % check if the features exists
     features_i = sprintf('features%d', i);
     eval(sprintf('global %s', features_i));
-    if exist(features_i, 'var')  ~= 0
+
+    % check if the global variable has been defined(size != 0)
+    if size(eval(features_i), 2) ~= 0
         continue;
     end
         
@@ -26,7 +29,7 @@ for i = g_data_idxes
     [~,features] = fft_feature(ground_truth, sig);
     %features 3D: (window, channel, feature(frequency))
     eval(sprintf('features%d = features;', i));
-    fprintf(1,'save features%d\n', i); % display formatted string
+    %fprintf(1,'save features%d\n', i); % display formatted string
     save(filename,sprintf('features%d', i), '-append');
 end
 

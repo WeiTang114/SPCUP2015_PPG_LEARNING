@@ -101,7 +101,10 @@ fprintf(resf, 'c = %f, gamma = %f,  Average abs error = %f BPM\n', c, gamma, aae
 fclose(resf);
 fclose all;
 
+
 fprintf(1, sprintf('Exp: %s succeeded!\n', exp_name));
+
+rmdir(tmp_dir, 's');
 exp_dir_succ = sprintf('%s__succ', exp_dir);
 copyfile(exp_dir, exp_dir_succ);
 rmdir(exp_dir, 's');

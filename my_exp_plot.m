@@ -12,9 +12,9 @@ window_size = 15;
 window_gau_sdtype = 'd2';
 
 % window_str to be shown in the name of the exp
-if window_dist == 'uniform'
+if strcmp(window_dist, 'uniform') == 1
     window_str = window_dist;
-elseif window_dist == 'gaussian'
+elseif strcmp(window_dist, 'gaussian') == 1
     window_str = sprintf('gaussian_%s', window_gau_sdtype);
 end
 

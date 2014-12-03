@@ -19,9 +19,15 @@ elseif strcmp(window_dist, 'gaussian') == 1
 end
 
 % for storing results
+% corr: correlation coefficient ^ 2
+% aae: average absolute error
 results = [];
-corr_sum = 0;
-aae_sum = 0;
+corr_sum_predict = 0;
+aae_sum_predict = 0;
+corr_sum_track = 0;
+aae_sum_track = 0;
+corr_sum_smooth = 0;
+aae_sum_smooth = 0;
 
 % directories
 exp_root_dir = 'exp';
@@ -65,42 +71,40 @@ for i = 1:12
     [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
             my_mod_window_smooth(predict_file, output_file_track, window_dist, window_size, window_gau_sdtype);
 
-    %{
-    mse = mse_track;
-    corr = corr_track;
-    avg_abs_err = aae_track;
-    %}
-    mse = mse_smooth;
-    corr = corr_smooth;
-    avg_abs_err = aae_smooth;
-
+        
+        
     % plot
     my_plot_func(fig_file, predict_file, output_file, output_file_track, output_file_smooth);
 
-    % save results to file
-    fprintf(resf, 'predict %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_predict, corr_predict, aae_predict);
-    fprintf(resf, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
-    fprintf(resf, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth);      
+    % save results to file and screen
+    for f = [1, resf]
+        fprintf(f, 'predict %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_predict, corr_predict, aae_predict);
+        fprintf(f, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
+        fprintf(f, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth);      
+    end
 
-    % print results
-    fprintf(1, 'predict %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_predict, corr_predict, aae_predict)
-    fprintf(1, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
-    fprintf(1, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth); 
+    fprintf(1, 'result : mse %f , corr %f , avg_abs_err = %f\n', mse_smooth, corr_smooth, aae_smooth);
 
-    fprintf(1, 'result : mse %f , corr %f , avg_abs_err = %f\n', mse, corr, avg_abs_err);
-
-    corr_sum = corr_sum + corr;
-    aae_sum = aae_sum + avg_abs_err;
+    corr_sum_predict = corr_sum_predict + corr_predict;
+    aae_sum_predict = aae_sum_predict + aae_predict;
+    corr_sum_track = corr_sum_track + corr_track;
+    aae_sum_track = aae_sum_track + aae_track;
+    corr_sum_smooth = corr_sum_smooth + corr_smooth;
+    aae_sum_smooth = aae_sum_smooth + aae_smooth;
 end
 
-fprintf(1, 'c = %f, gamma = %f,  Average corr = %f\n', c, gamma, corr_sum / 12);
-fprintf(resf, 'c = %f, gamma = %f,  Average corr = %f\n', c, gamma, corr_sum / 12);
-fprintf(1, 'c = %f, gamma = %f,  Average abs error = %f BPM\n', c, gamma, aae_sum / 12);
-fprintf(resf, 'c = %f, gamma = %f,  Average abs error = %f BPM\n', c, gamma, aae_sum / 12);
+for f = [1, resf]
+    fprintf(f, 'Average corr: predict = %f\n', corr_sum_predict / 12);
+    fprintf(f, 'Average corr: track   = %f\n', corr_sum_track / 12);
+    fprintf(f, 'Average corr: smooth  = %f\n', corr_sum_smooth / 12);
+
+    fprintf(f, 'Average aae(BPM): predict = %f\n', aae_sum_predict / 12);
+    fprintf(f, 'Average aae(BPM): track   = %f\n', aae_sum_track / 12);
+    fprintf(f, 'Average aae(BPM): smooth  = %f\n', aae_sum_smooth / 12);
+end
 
 fclose(resf);
 fclose all;
-
 
 fprintf(1, sprintf('Exp: %s succeeded!\n', exp_name));
 

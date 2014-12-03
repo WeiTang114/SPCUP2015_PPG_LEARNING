@@ -54,7 +54,7 @@ for i = 1:12
             my_svm_train(training_file, c, gamma, train_idxes);
 
     %predict
-    [mse_predict, corr_predict] = ...
+    [mse_predict, corr_predict, aae_predict] = ...
             my_svm_predict(model_file, predict_file, output_file, i);
 
     %temporal track
@@ -78,12 +78,12 @@ for i = 1:12
     my_plot_func(fig_file, predict_file, output_file, output_file_track, output_file_smooth);
 
     % save results to file
-    fprintf(resf, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);
+    fprintf(resf, 'predict %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_predict, corr_predict, aae_predict);
     fprintf(resf, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
     fprintf(resf, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth);      
 
     % print results
-    fprintf(1, 'predict %d:mse = %f , corr = %f\n', i, mse_predict, corr_predict);
+    fprintf(1, 'predict %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_predict, corr_predict, aae_predict)
     fprintf(1, 'tracked %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_track, corr_track, aae_track);
     fprintf(1, 'smooth  %d:mse = %f , corr = %f , avg_abs_err = %f\n', i, mse_smooth, corr_smooth, aae_smooth); 
 

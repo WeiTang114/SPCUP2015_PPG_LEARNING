@@ -1,4 +1,4 @@
-function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_file, indexes)
+function [mse, corr_coeff, aae] = my_svm_predict(model_file, predict_file, output_file, indexes)
 % my_svm_predict calls libsvm to predict the input data.
 %
 % usage: 
@@ -36,10 +36,6 @@ function [mse, corr_coeff] = my_svm_predict(model_file, predict_file, output_fil
         return;
     end
     
-    %original mse and corr
-    resultscell = regexp(cmdout, '[0-9.]*', 'match');
-    mse = str2double(char(resultscell(1)));
-    corr_coeff = str2double(char(resultscell(2)));
-    
-    fprintf(1, 'predict : mse %f , corr %f\n', mse, corr_coeff);
+    [mse, corr_coeff, aae] = my_calc_results(predict_file, output_file);
+    fprintf(1, 'predict : mse %f , corr %f , aae %f\n', mse, corr_coeff, aae);
 end

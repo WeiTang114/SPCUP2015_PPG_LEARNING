@@ -13,7 +13,7 @@ function [model_file] = my_svm_train(training_file, c, gamma, indexes)
     ground_truths = [];
     f = fopen(training_file, 'w+');
     for i = indexes
-        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
+        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5, 7])', i, i));
     end
     fclose(f);
     

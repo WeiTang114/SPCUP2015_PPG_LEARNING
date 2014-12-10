@@ -7,13 +7,14 @@ function [model_file] = my_svm_train(training_file, c, gamma, indexes)
     save_groundtruths;
     load('features.mat');
     load('ground_truths.mat');
+    load('features_accnorm.mat');
    
     
     features = [];
     ground_truths = [];
     f = fopen(training_file, 'w+');
     for i = indexes
-        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
+        eval(sprintf('features_to_svm_data(f, features%d, features_accnorm%d, ground_truth%d, [1:2, 6])', i, i, i));
     end
     fclose(f);
     

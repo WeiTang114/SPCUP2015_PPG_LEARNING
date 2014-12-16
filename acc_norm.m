@@ -2,8 +2,8 @@ function acc_norm
     data_idxes = 1:12;
 
     filename_accnorm = 'accnorm.mat';
-    if (exist(filename, 'file') == 0)
-        save(filename, '');
+    if (exist(filename_accnorm, 'file') == 0)
+        save(filename_accnorm, '');
     end
 
     for i = data_idxes

@@ -36,7 +36,7 @@ date = datestr(now, 'yyyymmdd_HHMMSS');
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s_accnorm_0.75_4__%s', c, gamma, window_size, window_str, date);
+exp_name = sprintf('%f_%f_t7_2_s%d_%s_accnorm_0.75_4_p2__%s', c, gamma, window_size, window_str, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
 mkdir(exp_dir);

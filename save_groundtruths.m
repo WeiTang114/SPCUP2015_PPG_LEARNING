@@ -7,7 +7,7 @@ end
 filename = 'ground_truths.mat';
 if (exist(filename, 'file') == 0)
     % create a new empty mat file
-    save(filename, ''); 
+    save(filename, 'g_data_idxes'); 
 end
 
 for i = g_data_idxes

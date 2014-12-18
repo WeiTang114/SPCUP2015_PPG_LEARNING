@@ -18,10 +18,10 @@ for f = 1 : files
         load(filename);
         if (strfind(filename, 'BPMtrace') > 0)  % ground truth
             ground_truth_o = BPM0;
-            %disp(strcat('loaded ground truth:', num2str(data_idx)));
+            disp(strcat('loaded ground truth:', num2str(data_idx)));
         else
             sig_o = sig;
-            %disp(strcat('loaded sig:', num2str(data_idx)));
+            disp(strcat('loaded sig:', num2str(data_idx)));
         end
     end
 end

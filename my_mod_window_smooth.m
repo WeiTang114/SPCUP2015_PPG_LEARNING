@@ -1,4 +1,4 @@
- function [mse, corr, aae, output_file_new] = my_mod_window_smooth(predict_file, output_file, window_dist, window_size, varargin)
+ function [mse, corr, aae, output_label] = my_mod_window_smooth(target_label, label, window_dist, window_size, varargin)
 % my_window_smooth does the task of sliding window smoothing after prediction is
 % finished. 
 % input:
@@ -26,19 +26,8 @@
     % window_type = 'R'   % window is at the right of the index
 %
     
-    vector = [];
-    
-    f = fopen(output_file, 'r');
-    output_file_new = sprintf('%s.winsmooth', output_file);
-    f_new = fopen(output_file_new, 'w+');
-    
-    % read output values line by line
-    line = fgetl(f);
-    while ischar(line)
-        val = str2double(line);
-        vector = [vector val];
-        line = fgetl(f);
-    end
+    vector = label';
+    output_label = [];
     
     % go window!
     for i = 1:size(vector, 2)
@@ -55,13 +44,11 @@
                 fprintf(1, 'Undefined window distribution: %s\n', window_dist);
         end
         
-        fprintf(f_new, '%f\n', val);
+        output_label = [output_label; val];
     end
-    fclose(f);
-    fclose(f_new);
     
     %new mse and corr
-    [mse, corr, aae] = my_calc_results(predict_file, output_file_new);
+    [mse, corr, aae] = my_calc_results(target_label, output_label);
 end
 
 function window = sliding_window(vector, index, win_size, win_type)

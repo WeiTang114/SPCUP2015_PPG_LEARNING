@@ -1,25 +1,21 @@
-function [mse, corr_coeff, aae, output_file_new] = my_mod_track(predict_file, output_file)
+function [mse, corr_coeff, aae, out_label] = my_mod_track(target_label, label)
 % my_mod_track does the task of temporal tracking after prediction is
 % finished. 
 % input:
-%   predict_file: the file to predict, created by my_svm_predict
-%   output_file: the output of svm-predict, the same as output_file for my_svm_predict.  
+%   target_label: ground truth
+%   label: the labels to be tracked
 % return:
 %   modified mse and corr_coeff^2
 %   aae: avg abs error
-%   output_file_new: modified output_file
+%   output_label: tracked labels
 
     DELTA = 7;
     TAU = 2;
-
-    f = fopen(output_file, 'r');
-    output_file_new = sprintf('%s.track', output_file);
-    f_new = fopen(output_file_new, 'w+');
     
-    line = fgetl(f);
     lastval = -1;
-    while ischar(line)
-        val = str2double(line);
+    out_label = [];
+    for i = 1:size(label, 1)
+        val = label(i);
         if lastval > 0
             diff = val - lastval;
             if diff > DELTA
@@ -27,17 +23,11 @@ function [mse, corr_coeff, aae, output_file_new] = my_mod_track(predict_file, ou
             elseif diff < -1 * DELTA
                 val = lastval - TAU;
             end
-        end
-    
-        fprintf(f_new, '%f\n', val);
+        end    
         lastval = val;
-        line = fgetl(f);
+        out_label = [out_label; val];
     end
    
-    fclose(f);
-    fclose(f_new);
-    
-    
     %new mse and corr
-    [mse, corr_coeff, aae] = my_calc_results(predict_file, output_file_new);
+    [mse, corr_coeff, aae] = my_calc_results(target_label, out_label);
 end

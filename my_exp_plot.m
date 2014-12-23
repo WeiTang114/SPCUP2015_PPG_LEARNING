@@ -1,15 +1,11 @@
-look_forward = 1;
+look_forward = 0;
 look_width = 1;
-
 extract_features;
-modify_feature;
 save_groundtruths;
+modify_feature(1.5, look_forward, look_width, 0);
 load('features.mat');
 load('ground_truths.mat');
 indexes_all = 1:12;
-
-look_forward = 1;
-look_width = 1;
 
 % parameters
 c = 2048;
@@ -19,9 +15,9 @@ window_size = 15;
 window_gau_sdtype = 'd2';
 
 % window_str to be shown in the name of the exp
-if window_dist == 'uniform'
+if strcmp(window_dist, 'uniform')
     window_str = window_dist;
-elseif window_dist == 'gaussian'
+elseif strcmp(window_dist, 'gaussian')
     window_str = sprintf('gaussian_%s', window_gau_sdtype);
 end
 

@@ -1,5 +1,8 @@
+% This script will prepare for double train:
+% modify the exist "ground_truths.mat" file and "features.mat" file
+% to fit what we need for second training
 
-modify_feature_to_acc;
+modify_feature(0, 0, 1, 0);
 
 if exist('g_data_idxes', 'var') == 0
     g_data_idxes = 1:12;

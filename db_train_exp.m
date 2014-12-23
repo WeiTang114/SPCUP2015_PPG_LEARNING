@@ -1,5 +1,4 @@
 extract_features;
-modify_feature;
 save_groundtruths;
 load('features.mat');
 load('ground_truths.mat');
@@ -11,6 +10,7 @@ gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
 window_gau_sdtype = 'd2';
+modify_feature(1, 0, 1, 0);
 
 % window_str to be shown in the name of the exp
 if window_dist == 'uniform'

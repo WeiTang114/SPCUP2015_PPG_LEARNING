@@ -17,15 +17,6 @@ function [model] = my_svm_train(training_file, c, gamma, indexes)
         insts = [insts; inst];
     end
     fclose(f);
-    
-    %{
-    cmd = sprintf('svm-train -s 3 -t 2 -q -c %f -g %f %s', c, gamma, training_file);
-    [status, cmdout] = system(cmd);
-    if (status ~= 0)
-        fprintf(1, 'svm train with c=%f g=%f file=%s  failed', c, gamma, training_file);
-        model_file = '';
-        return;
-    end
-    %}
+
     model = svmtrain(labels, insts, sprintf('-s 3 -t 2 -c %f -g %f', c, gamma));
 end

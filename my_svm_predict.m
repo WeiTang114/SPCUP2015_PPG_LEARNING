@@ -32,17 +32,6 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     target_label = labels;
     fclose(f);
     
-    %{
-    cmd = sprintf('svm-predict %s %s %s', predict_file, model_file, output_file);
-    [status, cmdout] = system(cmd);
-    if (status ~= 0)
-        fprintf(1, 'svm predict with testfile=%s model=%s outfile=%s failed', predict_file, model_file, output_file);
-        mse = 0;
-        corr_coeff = 0;
-        return;
-    end
-    %}
-    
     [out_label, accuracy, dec_value] = svmpredict(labels, insts, model);
     
     [mse, corr_coeff, aae] = my_calc_results(labels, out_label);

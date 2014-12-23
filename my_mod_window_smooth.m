@@ -2,8 +2,8 @@
 % my_window_smooth does the task of sliding window smoothing after prediction is
 % finished. 
 % input:
-%   predict_file: the file to predict, created by my_svm_predict
-%   output_file: the output of svm-predict(or tracking), the same as output_file for my_svm_predict.  
+%   target_label: 
+%   label: the output label to be smoothed
 %   window_dist: 'uniform' or 'gaussian'
 %   window_size: size of the window
 %   varargin: 
@@ -12,7 +12,7 @@
 % return:
 %   modified mse and corr_coeff^2
 %   aae: avg abs error
-%   output_file_new: modified output_file
+%   output_label: smoothed labels
 
 
 % parameters:

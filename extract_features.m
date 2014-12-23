@@ -6,31 +6,28 @@ my_global;
 if exist('g_data_idxes', 'var') == 0
     g_data_idxes = 1:12;
 end
-    
+
 filename = 'features.mat';
+
+% check file existence, if no, create it.
 if (exist(filename, 'file') == 0)
     % create a new empty mat file
     save(filename, 'g_data_idxes');  
 end
 
-for i = g_data_idxes
-    
-    % check if the features exists
-    features_i = sprintf('features%d', i);
-    eval(sprintf('global %s', features_i));
+% check variable 'features' existence
+global features;
+if size(features, 2) == 0
+    for i = g_data_idxes
 
-    % check if the global variable has been defined(size != 0)
-    if size(eval(features_i), 2) ~= 0
-        continue;
+        [sig, ground_truth] = get_data(i);
+        win_count = size(ground_truth,1);
+
+        %features 3D: (window, channel, feature(frequency))
+        [~,features{i}] = fft_feature(ground_truth, sig);
+
     end
-        
-    [sig, ground_truth] = get_data(i);
-    win_count = size(ground_truth,1);
-    [~,features] = fft_feature(ground_truth, sig);
-    %features 3D: (window, channel, feature(frequency))
-    eval(sprintf('features%d = features;', i));
-    %fprintf(1,'save features%d\n', i); % display formatted string
-    save(filename,sprintf('features%d', i), '-append');
 end
+save(filename, 'features', '-append');
 
-clearvars data_idxes features ground_truth i sig win_count filename
+clearvars data_idxes ground_truth i sig win_count filename

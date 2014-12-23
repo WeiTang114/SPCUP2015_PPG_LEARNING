@@ -10,20 +10,13 @@ if (exist(filename, 'file') == 0)
     save(filename, 'g_data_idxes'); 
 end
 
-for i = g_data_idxes
-    
-    % check if the ground_truths exists
-    gt_i = sprintf('ground_truth%d', i);
-    eval(sprintf('global %s', gt_i));
-    
-    % check if the global variable has been defined(size != 0)
-    if size(eval(gt_i), 2) ~= 0
-        continue;
+% check variable 'features' existence
+global ground_truth;
+if size(ground_truth, 2) == 0
+    for i = g_data_idxes
+        [sig, ground_truth{i}] = get_data(i);
     end
-    
-    [sig, ground_truth] = get_data(i);
-    eval(sprintf('ground_truth%d = ground_truth;', i));
-    save(filename,sprintf('ground_truth%d', i), '-append');
 end
+save(filename, 'ground_truth', '-append');
 
-clearvars data_idxes ground_truth i sig filename
+clearvars data_idxes i sig filename

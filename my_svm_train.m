@@ -8,12 +8,9 @@ function [model_file] = my_svm_train(training_file, c, gamma, indexes)
     load('features.mat');
     load('ground_truths.mat');
    
-    
-    features = [];
-    ground_truths = [];
     f = fopen(training_file, 'w+');
     for i = indexes
-        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
+        features_to_svm_data(f, features{i}, ground_truth{i}, 1:5);
     end
     fclose(f);
     
@@ -21,7 +18,7 @@ function [model_file] = my_svm_train(training_file, c, gamma, indexes)
     [status, cmdout] = system(cmd);
     if (status ~= 0)
         fprintf(1, 'svm train with c=%f g=%f file=%s  failed', c, gamma, training_file);
-        model_file = ''
+        model_file = '';
         return;
     end
     model_file = sprintf('%s.model',training_file);

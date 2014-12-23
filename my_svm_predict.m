@@ -23,7 +23,7 @@ function [mse, corr_coeff, aae] = my_svm_predict(model_file, predict_file, outpu
 
     f = fopen(predict_file, 'w+');
     for i = indexes
-        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
+        features_to_svm_data(f, features{i}, ground_truth{i}, 1:5);
     end
     fclose(f);
     

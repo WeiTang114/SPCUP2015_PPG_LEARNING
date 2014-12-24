@@ -10,6 +10,7 @@ gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
 window_gau_sdtype = 'd2';
+lastpredict_num = 1;
 
 % window_str to be shown in the name of the exp
 if strcmp(window_dist, 'uniform') == 1
@@ -35,7 +36,7 @@ date = datestr(now, 'yyyymmdd_HHMMSS');
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s__%s', c, gamma, window_size, window_str, date);
+exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d__%s_normalhalf', c, gamma, window_size, window_str, lastpredict_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
@@ -47,6 +48,7 @@ resf = fopen(sprintf('%s\\results.txt', exp_dir), 'w+');
 
 fprintf(1, 'Experiment starting: %s\n\n', exp_name);
 
+tic;
 for i = 1:12
     
     fprintf(1, '\nTest %d\n', i);
@@ -58,11 +60,11 @@ for i = 1:12
     
     %train
     model = ...
-            my_svm_train(training_file, c, gamma, train_idxes);
+            my_svm_train(training_file, c, gamma, train_idxes, lastpredict_num);
 
     %predict
     [mse_predict, corr_predict, aae_predict, tgt_label, out_label_predict] = ...
-            my_svm_predict(model, predict_file, output_file, i);
+            my_svm_predict(model, predict_file, output_file, i, lastpredict_num);
 
     %temporal track
     [mse_track, corr_track, aae_track, out_label_track] = ...
@@ -108,8 +110,9 @@ fclose(resf);
 fclose all;
 
 fprintf(1, sprintf('Exp: %s succeeded!\n', exp_name));
+toc;
 
-rmdir(tmp_dir, 's');
+%rmdir(tmp_dir, 's');
 exp_dir_succ = sprintf('%s__succ', exp_dir);
 copyfile(exp_dir, exp_dir_succ);
 rmdir(exp_dir, 's');

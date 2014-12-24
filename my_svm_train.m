@@ -18,5 +18,5 @@ function [model] = my_svm_train(training_file, c, gamma, indexes)
     end
     fclose(f);
 
-    model = svmtrain(labels, insts, sprintf('-s 3 -t 2 -c %f -g %f', c, gamma));
+    model = svmtrain(labels, insts, sprintf('-s 3 -t 2 -c %f -g %f -q', c, gamma));
 end

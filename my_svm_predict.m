@@ -32,7 +32,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     target_label = labels;
     fclose(f);
     
-    [out_label, accuracy, dec_value] = svmpredict(labels, insts, model);
+    [out_label, accuracy, dec_value] = svmpredict(labels, insts, model, '-q');
     
     [mse, corr_coeff, aae] = my_calc_results(labels, out_label);
     fprintf(1, 'predict : mse %f , corr %f , aae %f\n', mse, corr_coeff, aae);

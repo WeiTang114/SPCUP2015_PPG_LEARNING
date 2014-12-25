@@ -27,12 +27,12 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     out_label = [];
     for i = indexes
         for win = 1:size(features{i}, 1)
-            [label, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:5 8], 0, lastpredict_num, lastlabels);
+            [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:5 8], 0, lastpredict_num, lastlabels);
+            [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
-            lastlabels(1) = label;
-            target_label = [target_label; label];
-            [out_label_win, ~, ~] = svmpredict(label, inst, model, '-q');
+            lastlabels(1) = out_label_win;
             out_label = [out_label; out_label_win];
+            target_label = [target_label; labe_gt];
         end
     end
     fclose(f);

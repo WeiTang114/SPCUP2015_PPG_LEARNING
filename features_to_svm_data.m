@@ -24,12 +24,12 @@ function [label_vec, instance_mat] = features_to_svm_data(out_file, feature, gro
                     if is_train == 1
                         j = window-i;
                         if j > 0
-                            last = ground_truth(j, 1);
+                            last = (ground_truth(j, 1) - 70)/90;
                         else
-                            last = ground_truth(window, 1);
+                            last = (ground_truth(window, 1) - 70)/90;
                         end
                     else
-                        last = last_labels(i);
+                        last = (last_labels(i) - 70)/90;
                     end
                     dim_count = dim_count+1;
                     fprintf(out_file, ' %d:%f', dim_count, last);

@@ -10,7 +10,7 @@ gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
 window_gau_sdtype = 'd2';
-lastpredict_num = 1;
+lastpredict_num = 25;
 
 % window_str to be shown in the name of the exp
 if strcmp(window_dist, 'uniform') == 1
@@ -36,7 +36,7 @@ date = datestr(now, 'yyyymmdd_HHMMSS');
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d__%s_normalhalf', c, gamma, window_size, window_str, lastpredict_num, date);
+exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d__%s__normalize', c, gamma, window_size, window_str, lastpredict_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);

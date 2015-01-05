@@ -12,7 +12,7 @@ function [model] = my_svm_train(training_file, c, gamma, indexes, lastpredict_nu
     labels = [];
     insts = [];
     for i = indexes
-        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, [1:5 8], 1, lastpredict_num, []);
+        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, [1:2 8], 1, lastpredict_num, []);
         labels = [labels; label];
         insts = [insts; inst];
     end

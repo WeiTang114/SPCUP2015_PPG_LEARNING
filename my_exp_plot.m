@@ -36,6 +36,7 @@ date = datestr(now, 'yyyymmdd_HHMMSS');
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
 exp_name = sprintf('%f_%f_t7_2_s%d_%s__%s', c, gamma, window_size, window_str, date);
+%exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
 mkdir(exp_dir);
@@ -56,25 +57,25 @@ for i = 1:12
     fig_file = sprintf('%s\\plot_%d', exp_dir, i);
     
     %train
-    model_file = ...
+    model = ...
             my_svm_train(training_file, c, gamma, train_idxes);
 
     %predict
-    [mse_predict, corr_predict, aae_predict] = ...
-            my_svm_predict(model_file, predict_file, output_file, i);
+    [mse_predict, corr_predict, aae_predict, tgt_label, out_label_predict] = ...
+            my_svm_predict(model, predict_file, output_file, i);
 
     %temporal track
-    [mse_track, corr_track, aae_track, output_file_track] = ...
-            my_mod_track(predict_file, output_file);
+    [mse_track, corr_track, aae_track, out_label_track] = ...
+            my_mod_track(tgt_label, out_label_predict);
 
     %window_smooth
-    [mse_smooth, corr_smooth, aae_smooth, output_file_smooth] = ...
-            my_mod_window_smooth(predict_file, output_file_track, window_dist, window_size, window_gau_sdtype);
+    [mse_smooth, corr_smooth, aae_smooth, out_label_smooth] = ...
+            my_mod_window_smooth(tgt_label, out_label_track, window_dist, window_size, window_gau_sdtype);
 
         
         
     % plot
-    my_plot_func(fig_file, predict_file, output_file, output_file_track, output_file_smooth);
+    my_plot_func(fig_file, tgt_label, out_label_predict, out_label_track, out_label_smooth);
 
     % save results to file and screen
     for f = [1, resf]

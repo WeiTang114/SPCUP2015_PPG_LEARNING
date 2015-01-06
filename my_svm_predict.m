@@ -1,4 +1,4 @@
-function [mse, corr_coeff, aae] = my_svm_predict(model_file, predict_file, output_file, indexes)
+function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes)
 % my_svm_predict calls libsvm to predict the input data.
 %
 % usage: 
@@ -22,20 +22,18 @@ function [mse, corr_coeff, aae] = my_svm_predict(model_file, predict_file, outpu
     load('ground_truths.mat');
 
     f = fopen(predict_file, 'w+');
+    labels = [];
+    insts = [];
     for i = indexes
-        eval(sprintf('features_to_svm_data(f, features%d, ground_truth%d, [1:5])', i, i));
+        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, 1:5);        
+        labels = [labels; label];
+        insts = [insts; inst];
     end
+    target_label = labels;
     fclose(f);
     
-    cmd = sprintf('svm-predict %s %s %s', predict_file, model_file, output_file);
-    [status, cmdout] = system(cmd);
-    if (status ~= 0)
-        fprintf(1, 'svm predict with testfile=%s model=%s outfile=%s failed', predict_file, model_file, output_file);
-        mse = 0;
-        corr_coeff = 0;
-        return;
-    end
+    [out_label, accuracy, dec_value] = svmpredict(labels, insts, model, '-q');
     
-    [mse, corr_coeff, aae] = my_calc_results(predict_file, output_file);
+    [mse, corr_coeff, aae] = my_calc_results(labels, out_label);
     fprintf(1, 'predict : mse %f , corr %f , aae %f\n', mse, corr_coeff, aae);
 end

@@ -7,6 +7,7 @@ function [c, gamma] = my_svm_grid(cv_set)
 
     load('features.mat');
     load('ground_truths.mat');
+    load_rawdata;
 
     logC_s = 1;
     logC_b = 15;

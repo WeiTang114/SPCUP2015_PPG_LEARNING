@@ -20,6 +20,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     save_groundtruths;
     load('features.mat');
     load('ground_truths.mat');
+    load_rawdata;
     
     f = fopen(predict_file, 'w+');
     lastlabels(1:lastpredict_num) = 72; % normal heart rate

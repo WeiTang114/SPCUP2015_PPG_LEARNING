@@ -7,9 +7,11 @@ function [] = features_to_svm_data(out_file, feature, ground_truth, use_feature)
         fprintf(out_file,'%f',ground_truth(window,1));
         dim_count = 0;
         for u = use_feature
-            for d = 1 : dim
-                dim_count = dim_count+1;
-                fprintf(out_file,' %d:%f',dim_count,feature(window,u,d));
+            if u <= 5
+                for d = 1 : dim
+                    dim_count = dim_count+1;
+                    fprintf(out_file,' %d:%f',dim_count,feature(window,u,d));
+                end
             end
         end
         fprintf(out_file,'\n');

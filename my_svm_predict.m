@@ -1,4 +1,4 @@
-function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, lastpredict_num)
+function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, lastpredict_num, past_acc_end, acc_num)
 % my_svm_predict calls libsvm to predict the input data.
 %
 % usage: 
@@ -21,6 +21,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     load('features.mat');
     load('ground_truths.mat');
     load_rawdata;
+    acc_features = extract_acc_features(0);
     
     f = fopen(predict_file, 'w+');
     lastlabels(1:lastpredict_num) = 72; % normal heart rate
@@ -28,7 +29,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     out_label = [];
     for i = indexes
         for win = 1:size(features{i}, 1)
-            [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels);
+            [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
             lastlabels(1) = out_label_win;

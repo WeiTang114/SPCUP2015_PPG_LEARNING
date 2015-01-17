@@ -1,6 +1,6 @@
 % This file convert the matlab variables to libsvm data format and save
 % them to a file.
-function [label_vec, instance_mat] = features_to_svm_data(out_file, feature, ground_truth, use_feature, is_train, lastpredict_num, last_labels)
+function [label_vec, instance_mat] = features_to_svm_data(out_file, feature, ground_truth, use_feature, is_train, lastpredict_num, last_labels, his_acc_features, past_acc_end, past_acc_num, window_idx)
     win_count = size(ground_truth, 1);
     dim = size(feature,3);            % 27 (frequency)
     
@@ -34,6 +34,25 @@ function [label_vec, instance_mat] = features_to_svm_data(out_file, feature, gro
                     dim_count = dim_count+1;
                     fprintf(out_file, ' %d:%f', dim_count, last);
                     inst_vec = [inst_vec, last];
+                end
+            elseif u >= 21 && u <= 25
+                type = u - 20; % 1 ~ 5
+                for i = 1:past_acc_num
+                    if is_train == 1
+                        j = window - past_acc_end - i + 1;
+                    else 
+                        j = window_idx - past_acc_end - i + 1;
+                    end
+                    if j > 0
+                        features = his_acc_features{type}(j, :);
+                    else
+                        features = his_acc_features{type}(window, :);
+                    end
+                    for fff = 1:size(features, 2)
+                        dim_count = dim_count + 1;
+                        fprintf(out_file, ' %d:%f', dim_count, features(fff));
+                        inst_vec = [inst_vec, features(fff)];
+                    end
                 end
             end
         end

@@ -27,8 +27,32 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     lastlabels(1:lastpredict_num) = 72; % normal heart rate
     target_label = [];
     out_label = [];
+    peak_win_num = 12;
     for i = indexes
-        for win = 1:size(features{i}, 1)
+        
+        for win = 1:peak_win_num
+            len = win * 250 + 750;
+            peak_num = 3;
+            peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            peaks_best{1} = lastlabels(1);
+            peaks_best{2} = lastlabels(1);
+            for p = 1:2
+                for j = 1:peak_num
+                    if 50 < peaks{p}(j) && 180 > peaks{p}(j)
+                        peaks_best{p} = peaks{p}(j);
+                        break;
+                    end
+                end
+            end
+            out_label_win = (peaks_best{1} + peaks_best{2}) / 2;
+            lastlabels = circshift(lastlabels, [2, 1]);
+            lastlabels(1) = out_label_win;
+            out_label = [out_label; out_label_win];
+            target_label = [target_label; ground_truth{i}(win)];
+        end
+            
+        for win = peak_win_num + 1:size(features{i}, 1)
             [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)

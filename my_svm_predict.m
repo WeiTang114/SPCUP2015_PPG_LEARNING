@@ -1,4 +1,4 @@
-function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, lastpredict_num, past_acc_end, acc_num)
+function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, lastpredict_num, past_acc_end, acc_num, peak_win_num)
 % my_svm_predict calls libsvm to predict the input data.
 %
 % usage: 
@@ -7,10 +7,18 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
 %   model_file    the .model file created by my_svm_predict
 %   predict_file  new file name, stores formatted libsvm-format data
 %   output_file   new file name, stores the output of svm-predict
-%   indexed       the indexes vector to be predicted, e.g. [1:5], [12]
+%   indexes       the indexes vector to be predicted, e.g. [1:5], [12]
+%   lastpredict_num  how many labels of past windows should be the features
+%   past_acc_end  index of the last window whose acc is considered to the
+%                 current window.--->[... 3 2 1 0(curr)]
+%   acc_num       how many windows whose acc is considered, until
+%                 past_acc_end
 % output:
 %   mse           mean-square error
 %   corr_coeff    the square of correlation coeffient(corr^2)
+%   aae           average absolute error
+%   target_label  m*1 matrix of the target labels(ground truths)
+%   out_label     m*1 matrix of the output labels
 
     if (nargin < 3)
         indexes = 1:12;
@@ -27,7 +35,6 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     lastlabels(1:lastpredict_num) = 72; % normal heart rate
     target_label = [];
     out_label = [];
-    peak_win_num = 12;
     for i = indexes
         
         for win = 1:peak_win_num

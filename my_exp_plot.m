@@ -13,6 +13,7 @@ window_gau_sdtype = 'd2';
 lastpredict_num = 20;
 past_acc_end = 0;
 acc_num = 1;
+peak_win_num = 12;
 
 % window_str to be shown in the name of the exp
 if strcmp(window_dist, 'uniform') == 1
@@ -37,7 +38,7 @@ date = datestr(now, 'yyyymmdd_HHMMSS');
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%dNM_ppgonly__acc_l20_12345_%d_%d___%s', c, gamma, window_size, window_str, lastpredict_num, past_acc_end, acc_num, date);
+exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%dNM_ppgonly__acc_l20_12345_%d_%d_initpeak%d__%s', c, gamma, window_size, window_str, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf('%s\\%s', exp_root_dir, exp_name);
 tmp_dir = sprintf('%s\\tmp', exp_dir);
@@ -65,7 +66,7 @@ for i = 1:12
 
     %predict
     [mse_predict, corr_predict, aae_predict, tgt_label, out_label_predict] = ...
-            my_svm_predict(model, predict_file, output_file, i, lastpredict_num, past_acc_end, acc_num);
+            my_svm_predict(model, predict_file, output_file, i, lastpredict_num, past_acc_end, acc_num, peak_win_num);
 
     %temporal track
     [mse_track, corr_track, aae_track, out_label_track] = ...

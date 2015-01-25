@@ -27,7 +27,7 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
     
     d = d(1:100);
     dll = log2(d);
-    plot(dll), hold on, plot(dll, 'rx');grid on;hold off;
+    %plot(dll), hold on, plot(dll, 'rx');grid on;hold off;
 	%plot((d./sev)*100),hold on,plot((d./sev)*100,'rx'),hold on;
     
 % remove too small components
@@ -85,36 +85,36 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
         %vr = (sum(d(I))/sev)*100;
         vr = [];
         
-        fprintf('%d', I(1));
+        %fprintf('%d', I(1));
         if acc_dominant(y, acc3) == 1
-            fprintf(': acc_dominant\n');
+            %fprintf(': acc_dominant\n');
             continue; 
         end
-        fprintf(': not\n');
-        plot(ppgy);
+        %fprintf(': not\n');
+        %plot(ppgy);
         ppgy = ppgy + y;
     end
     y = ppgy;
-    figure;subplot(2,1,1);hold on;xlabel('Data poit');ylabel('Original and reconstructed series')
-    plot(x1);grid on;plot(y,'r')
-    subplot(2,1,2);plot(r,'g');xlabel('Data poit');ylabel('Residual series');grid on
+    %figure;subplot(2,1,1);hold on;xlabel('Data poit');ylabel('Original and reconstructed series')
+    %plot(x1);grid on;plot(y,'r')
+    %subplot(2,1,2);plot(r,'g');xlabel('Data poit');ylabel('Residual series');grid on
     
 end
 
 function bool = acc_dominant(ppg, acc3)
     ppgf = abs(fft(ppg, [], 2));
     ppgf([1:2, end/2:end]) = 0;
-    domif = get_peaks(ppgf, 1, 1)
+    domif = get_peaks(ppgf, 1, 1);
     bool = 0;
     for i = 1:3
         accf = abs(fft(acc3(i, :), [], 2));
         accf([1:2, end/2:end]) = 0;
-        freqs = get_peaks(accf, 5, 0.6)
+        freqs = get_peaks(accf, 5, 0.6);
         %freqs = [freqs-1, freqs, freqs+1]
         if ismember(domif, freqs)
             figure; subplot(2,1,1);plot(ppgf(1:100));
             subplot(2,1,2); plot(accf(1:100));
-            bool = 1
+            bool = 1;
             close;
             break;
         end

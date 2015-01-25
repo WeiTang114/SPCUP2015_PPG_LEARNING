@@ -15,8 +15,16 @@ function [ dim , feature ] = fft_feature( GT , SIG )
     feature = zeros([count 5 dim]);
     
     for c = 1 : count %for all window
+        fprintf('win %d ', c);
         sig_part = zeros([5 window_size]);
         sig_part(:,:) = SIG(2:6,window_diff_sec*fps*(c-1)+1:window_diff_sec*fps*(c-1)+window_size);%for 2PPG, 3 accel channels
+        
+        % SSA
+        L = 400;
+        [sig_part(1,:),~,~] = my_ssa(sig_part(1,:), sig_part(3:5, :), L);
+        [sig_part(2,:),~,~] = my_ssa(sig_part(2,:), sig_part(3:5, :), L);
+        
+        
         fft_sig_part = abs(fft(sig_part,[],2));
         
         feature(c,:,:) = fft_sig_part(:,dim_low:dim_high);

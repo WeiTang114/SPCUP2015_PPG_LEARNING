@@ -32,5 +32,6 @@ function [ dim , feature ] = fft_feature( GT , SIG )
             feature(c,f,:) = feature(c,f,:)/mean(feature(c,f,:));
         end
     end
+    fprintf('\n');
 end
 

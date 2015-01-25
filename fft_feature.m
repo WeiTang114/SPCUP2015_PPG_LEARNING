@@ -29,7 +29,10 @@ function [ dim , feature ] = fft_feature( GT , SIG )
         
         feature(c,:,:) = fft_sig_part(:,dim_low:dim_high);
         for f = 1 : 5
-            feature(c,f,:) = feature(c,f,:)/mean(feature(c,f,:));
+            mean_ = mean(feature(c, f, :));
+            if mean_ ~= 0
+                feature(c,f,:) = feature(c,f,:)/mean(feature(c,f,:));
+            end
         end
     end
     fprintf('\n');

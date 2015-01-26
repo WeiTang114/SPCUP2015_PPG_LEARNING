@@ -34,9 +34,8 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
     thres = 0.01 * sev;
     d = d(d > thres);
     %plot((d./sev) * 100, 'gx');
+	%title('Singular Spectrum');xlabel('Eigenvalue Number');ylabel('Eigenvalue (% Norm of trajectory matrix retained)')
     
-    
-	title('Singular Spectrum');xlabel('Eigenvalue Number');ylabel('Eigenvalue (% Norm of trajectory matrix retained)')
     V = (X')*U; 
     rc = U*V';
     

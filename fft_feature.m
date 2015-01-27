@@ -24,8 +24,14 @@ function [ dim , feature ] = fft_feature( GT , SIG )
         [sig_part(1,:),~,~] = my_ssa(sig_part(1,:), sig_part(3:5, :), L);
         [sig_part(2,:),~,~] = my_ssa(sig_part(2,:), sig_part(3:5, :), L);
         
+        %FFT
+        %fft_sig_part = abs(fft(sig_part,[],2));
         
-        fft_sig_part = abs(fft(sig_part,[],2));
+        %Periodogram
+        for i = 1:5
+            fft_sig_part(i,:) = periodogram(sig_part(i, :), rectwin(window_size), window_size, fps);
+        end
+        
         
         feature(c,:,:) = fft_sig_part(:,dim_low:dim_high);
         for f = 1 : 5

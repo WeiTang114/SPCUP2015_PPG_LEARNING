@@ -1,4 +1,4 @@
-function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, lastpredict_num, past_acc_end, acc_num, peak_win_num)
+function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model, predict_file, output_file, indexes, use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num)
 % my_svm_predict calls libsvm to predict the input data.
 %
 % usage: 
@@ -40,8 +40,17 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
         for win = 1:peak_win_num
             len = win * 250 + 750;
             peak_num = 3;
-            peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
-            peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            
+            % periodogram test
+            periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
+            periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
+            peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
+            peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
+            
+            % fft original
+            %peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            %peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            
             peaks_best{1} = lastlabels(1);
             peaks_best{2} = lastlabels(1);
             for p = 1:2
@@ -58,9 +67,18 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
             out_label = [out_label; out_label_win];
             target_label = [target_label; ground_truth{i}(win)];
         end
-            
+        
+        if peak_win_num < lastpredict_num
+            lastlabels(peak_win_num + 1: lastpredict_num) = mean(lastlabels(1:peak_win_num));
+        end
+        
+        
         for win = peak_win_num + 1:size(features{i}, 1)
-            [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+            if use_lastpredict
+                [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+            else
+                [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+            end
             [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
             lastlabels(1) = out_label_win;

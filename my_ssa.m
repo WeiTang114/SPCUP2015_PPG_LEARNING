@@ -106,10 +106,12 @@ function bool = acc_dominant(ppg, acc3)
     domif = get_peaks(ppgf, 1, 1);
     bool = 0;
     for i = 1:3
-        accf = abs(fft(acc3(i, :), [], 2));
-        accf([1:2, end/2:end]) = 0;
+        %accf = abs(fft(acc3(i, :), [], 2));
+        %accf([1:2, end/2:end]) = 0;
+        len = size(acc3, 2);
+        accf = periodogram(acc3(i,:), rectwin(len), len, 125);
         freqs = get_peaks(accf, 5, 0.6);
-        %freqs = [freqs-1, freqs, freqs+1]
+        %freqs = [freqs-1, freqs, freqs+1];
         if ismember(domif, freqs)
             figure; subplot(2,1,1);plot(ppgf(1:100));
             subplot(2,1,2); plot(accf(1:100));

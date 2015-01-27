@@ -21,8 +21,8 @@ function [ dim , feature ] = fft_feature( GT , SIG )
         
         % SSA
         L = 400;
-        [sig_part(1,:),~,~] = my_ssa(sig_part(1,:), sig_part(3:5, :), L);
-        [sig_part(2,:),~,~] = my_ssa(sig_part(2,:), sig_part(3:5, :), L);
+        [sig_part(1,:),~,~] = my_ssa(sig_part(1,:), sig_part(3:5, :), L, GT(c));
+        [sig_part(2,:),~,~] = my_ssa(sig_part(2,:), sig_part(3:5, :), L, GT(c));
         
         %FFT
         %fft_sig_part = abs(fft(sig_part,[],2));

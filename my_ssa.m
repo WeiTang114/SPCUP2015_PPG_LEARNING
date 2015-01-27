@@ -1,4 +1,4 @@
-function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
+function [ppgy, r, vr] = my_ssa(ppgx, acc3, L, last_hr)
 
     close all;
     x1 = ppgx;
@@ -37,10 +37,7 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
 	%title('Singular Spectrum');xlabel('Eigenvalue Number');ylabel('Eigenvalue (% Norm of trajectory matrix retained)')
     
     V = (X')*U; 
-    rc = U*V';
-    
-
-    
+    rc = U*V';  
     
 % Step 3: Grouping
 
@@ -85,7 +82,7 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
         vr = [];
         
         %fprintf('%d', I(1));
-        if acc_dominant(y, acc3) == 1
+        if acc_dominant(y, acc3, last_hr) == 1
             %fprintf(': acc_dominant\n');
             continue; 
         end
@@ -100,7 +97,7 @@ function [ppgy, r, vr] = my_ssa(ppgx, acc3, L)
     
 end
 
-function bool = acc_dominant(ppg, acc3)
+function bool = acc_dominant(ppg, acc3, last_hr)
     ppgf = abs(fft(ppg, [], 2));
     ppgf([1:2, end/2:end]) = 0;
     domif = get_peaks(ppgf, 1, 1);
@@ -110,8 +107,9 @@ function bool = acc_dominant(ppg, acc3)
         %accf([1:2, end/2:end]) = 0;
         len = size(acc3, 2);
         accf = periodogram(acc3(i,:), rectwin(len), len, 125);
-        freqs = get_peaks(accf, 5, 0.6);
+        freqs = get_peaks(accf, 10, 0.5);
         %freqs = [freqs-1, freqs, freqs+1];
+        freqs = freqs(~ismember(freqs, [last_hr-2, last_hr+2, last_hr-1, last_hr+1, last_hr]));
         if ismember(domif, freqs)
             figure; subplot(2,1,1);plot(ppgf(1:100));
             subplot(2,1,2); plot(accf(1:100));

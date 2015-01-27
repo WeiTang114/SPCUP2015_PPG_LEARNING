@@ -37,6 +37,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     out_label = [];
     for i = indexes
         
+        % for windows before 16th, we use the peak of the periodogram 
         for win = 1:peak_win_num
             len = win * 250 + 750;
             peak_num = 3;
@@ -73,21 +74,45 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
         end
         
         
-        for win = peak_win_num + 1:size(features{i}, 1)
+        % for windows after 17th, we use prediction
+        win = peak_win_num + 1;
+        sig_part = get_sig_part(rawdata{i}(2:6, :), win); 
+        while size(sig_part, 2) == 1000
+            
+            % for every window, we get a set of features for ONE label
+            feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
+            
             if use_lastpredict
-                [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             else
-                [labe_gt, inst] = features_to_svm_data(f, features{i}(win, :, :), ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             end
             [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
             lastlabels(1) = out_label_win;
             out_label = [out_label; out_label_win];
             target_label = [target_label; labe_gt];
+            
+            % next window
+            win = win + 1;
+            sig_part = get_sig_part(rawdata{i}(2:6, :), win); 
         end
     end
     fclose(f);
 
     [mse, corr_coeff, aae] = my_calc_results(target_label, out_label);
     fprintf(1, 'predict : mse %f , corr %f , aae %f\n', mse, corr_coeff, aae);
+end
+
+
+function sig_part = get_sig_part(sig, win)
+    window_diff_sec = 2;
+    window_size = 1000;
+    fps = 125;
+    window_sec = 8;
+    if size(sig, 2) >= win * 250 + 750
+        sig_part(:,:) = sig(:,window_diff_sec*fps*(win-1)+1:window_diff_sec*fps*(win-1)+window_size);%for 2PPG, 3 accel channels
+    else
+        sig_part = [];
+    end
 end

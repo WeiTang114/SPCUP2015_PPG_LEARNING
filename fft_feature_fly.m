@@ -18,12 +18,12 @@ function [ feature ] = fft_feature_fly( sig, last_hr)
     [sig(2,:),~,~] = my_ssa(sig(2,:), sig(3:5, :), L, last_hr);
      
     %FFT
-    %fft_sig_part = abs(fft(sig_part,[],2));
+    fq_sig = abs(fft(sig,[],2));
 
     %Periodogram
-    for i = 1:5
-        fq_sig(i,:) = periodogram(sig(i, :), rectwin(len), len, fps);
-    end
+%     for i = 1:5
+%         fq_sig(i,:) = periodogram(sig(i, :), rectwin(len), len, fps);
+%     end
     
     % select frequency
     feature(1,:,:) = fq_sig(:, dim_low:dim_high);

@@ -42,7 +42,7 @@ else       sep = '/';  end
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d_SSA__%s', c, gamma, window_size, window_str, use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
+exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d_SSAonthefly__%s', c, gamma, window_size, window_str, use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf(['%s' sep '%s'], exp_root_dir, exp_name);
 tmp_dir = sprintf(['%s' sep 'tmp'], exp_dir);

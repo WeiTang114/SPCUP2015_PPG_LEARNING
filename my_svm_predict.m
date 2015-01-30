@@ -43,14 +43,14 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
             peak_num = 3;
             
             % periodogram test
-            periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
-            periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
-            peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
-            peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
+%             periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
+%             periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
+%             peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
+%             peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
             
             % fft original
-            %peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
-            %peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
+            peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
             
             peaks_best{1} = lastlabels(1);
             peaks_best{2} = lastlabels(1);
@@ -83,9 +83,9 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
             feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
             
             if use_lastpredict
-                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             else
-                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8 21:25], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
             end
             [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)

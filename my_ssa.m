@@ -102,14 +102,30 @@ function bool = acc_dominant(ppg, acc3, last_hr)
     ppgf([1:2, end/2:end]) = 0;
     domif = get_peaks(ppgf, 1, 1);
     bool = 0;
+            
+        
+    % we want the frequency range
+    mask = zeros(1, size(acc3, 2));
+    mask(:, 6:32) = 1;
+    
     for i = 1:3
-        %accf = abs(fft(acc3(i, :), [], 2));
-        %accf([1:2, end/2:end]) = 0;
-        len = size(acc3, 2);
-        accf = periodogram(acc3(i,:), rectwin(len), len, 125);
+        %fft
+        accf = abs(fft(acc3(i, :), [], 2));
+        accf([1:2, end/2:end]) = 0;
+        accf = accf .* mask;
+            
+        
+        % Periodogram
+%         len = size(acc3, 2);
+%         accf = periodogram(acc3(i,:), rectwin(len), len, 125);
+
         freqs = get_peaks(accf, 10, 0.5);
         %freqs = [freqs-1, freqs, freqs+1];
-        freqs = freqs(~ismember(freqs, [last_hr-2, last_hr+2, last_hr-1, last_hr+1, last_hr]));
+        
+        last_hr_n = int8((last_hr/60) / 0.125) + 1;
+        
+        % filter out the acc frequencies closed to the last HR
+        freqs = freqs(~ismember(freqs, [last_hr_n-2, last_hr_n+2, last_hr_n-1, last_hr_n+1, last_hr_n]));
         if ismember(domif, freqs)
             figure; subplot(2,1,1);plot(ppgf(1:100));
             subplot(2,1,2); plot(accf(1:100));

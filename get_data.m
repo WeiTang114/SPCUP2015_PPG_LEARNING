@@ -4,25 +4,21 @@ function [ sig_o , ground_truth_o ] = get_data( data_idx )
 file_list = dir('./');
 files = size(file_list,1);
 
-for f = 1 : files
-    filename = file_list(f).name();
-    if (filename(1) ~= 'D')
-        continue
-    end
-    if (strcmp(filename(1:4), 'DATA') == 1)
-        file_idx = filename(6:7);
-        if (strcmp(file_idx, num2str(data_idx, '%02.0f')) == 0)
-            % index not match
-            continue;
-        end
-        load(filename);
-        if (strfind(filename, 'BPMtrace') > 0)  % ground truth
-            ground_truth_o = BPM0;
-            %disp(strcat('loaded ground truth:', num2str(data_idx)));
-        else
-            sig_o = sig;
-            %disp(strcat('loaded sig:', num2str(data_idx)));
-        end
-    end
-end
+f_sig = { 'DATA_01_TYPE01', 'DATA_02_TYPE02', 'DATA_03_TYPE02',...
+    'DATA_04_TYPE02', 'DATA_05_TYPE02', 'DATA_06_TYPE02', ...
+    'DATA_07_TYPE02', 'DATA_08_TYPE02', 'DATA_09_TYPE02', ...
+    'DATA_10_TYPE02', 'DATA_11_TYPE02', 'DATA_12_TYPE02', ...
+    'DATA_S04_T01'};
+f_gt = { 'DATA_01_TYPE01_BPMtrace', 'DATA_02_TYPE02_BPMtrace',...
+    'DATA_03_TYPE02_BPMtrace', 'DATA_04_TYPE02_BPMtrace', ...
+    'DATA_05_TYPE02_BPMtrace', 'DATA_06_TYPE02_BPMtrace', ...
+    'DATA_07_TYPE02_BPMtrace', 'DATA_08_TYPE02_BPMtrace', ...
+    'DATA_09_TYPE02_BPMtrace', 'DATA_10_TYPE02_BPMtrace', ...
+    'DATA_11_TYPE02_BPMtrace', 'DATA_12_TYPE02_BPMtrace', ...
+    'BPM_S04_T01'};
 
+
+load(f_sig{data_idx});
+load(f_gt{data_idx});
+sig_o = sig;
+ground_truth_o = BPM0;

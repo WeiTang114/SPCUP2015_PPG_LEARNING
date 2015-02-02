@@ -2,7 +2,7 @@ extract_features;
 save_groundtruths;
 load('features.mat');
 load('ground_truths.mat');
-indexes_all = 1:12;
+indexes_all = 1:13;
 
 % parameters
 c = 2048;
@@ -10,8 +10,8 @@ gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
 window_gau_sdtype = 'd2';
-use_lastpredict = 1;
-lastpredict_num = 20;
+use_lastpredict = 0;
+lastpredict_num = 5;
 past_acc_end = 0;
 acc_num = 0;
 peak_win_num = 12;
@@ -42,7 +42,7 @@ else       sep = '/';  end
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('%f_%f_t7_2_s%d_%s_lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d_SSAonthefly__%s', c, gamma, window_size, window_str, use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
+exp_name = sprintf('lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d_SSAonthefly_ml_ssa__%s', use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf(['%s' sep '%s'], exp_root_dir, exp_name);
 tmp_dir = sprintf(['%s' sep 'tmp'], exp_dir);
@@ -55,7 +55,7 @@ resf = fopen(sprintf(['%s' sep 'results.txt'], exp_dir), 'w+');
 fprintf(1, 'Experiment starting: %s\n\n', exp_name);
 
 tic;
-for i = 1:12
+for i = 13
 
     fprintf(1, '\nTest %d\n', i);
     train_idxes = indexes_all( ~ismember( indexes_all, i ) );
@@ -102,18 +102,20 @@ for i = 1:12
     aae_sum_smooth = aae_sum_smooth + aae_smooth;
 end
 
+count = size(indexes_all, 2);
 for f = [1, resf]
-    fprintf(f, 'Average corr: predict = %f\n', corr_sum_predict / 12);
-    fprintf(f, 'Average corr: track   = %f\n', corr_sum_track / 12);
-    fprintf(f, 'Average corr: smooth  = %f\n', corr_sum_smooth / 12);
+    fprintf(f, 'Average corr: predict = %f\n', corr_sum_predict / count);
+    fprintf(f, 'Average corr: track   = %f\n', corr_sum_track / count);
+    fprintf(f, 'Average corr: smooth  = %f\n', corr_sum_smooth / count);
 
-    fprintf(f, 'Average aae(BPM): predict = %f\n', aae_sum_predict / 12);
-    fprintf(f, 'Average aae(BPM): track   = %f\n', aae_sum_track / 12);
-    fprintf(f, 'Average aae(BPM): smooth  = %f\n', aae_sum_smooth / 12);
+    fprintf(f, 'Average aae(BPM): predict = %f\n', aae_sum_predict / count);
+    fprintf(f, 'Average aae(BPM): track   = %f\n', aae_sum_track / count);
+    fprintf(f, 'Average aae(BPM): smooth  = %f\n', aae_sum_smooth / count);
 end
 
 fclose(resf);
 fclose all;
+close all;
 
 fprintf(1, sprintf('Exp: %s succeeded!\n', exp_name));
 toc;

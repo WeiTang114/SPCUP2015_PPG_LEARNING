@@ -35,67 +35,95 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
     lastlabels(1:lastpredict_num) = 72; % normal heart rate
     target_label = [];
     out_label = [];
-    for i = indexes
+    for i = indexes 
         
-        % for windows before 16th, we use the peak of the periodogram 
-        for win = 1:peak_win_num
-            len = win * 250 + 750;
-            peak_num = 3;
-            
-            % periodogram test
-%             periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
-%             periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
-%             peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
-%             peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
-            
-            % fft original
-            peaks{1} = get_peaks(abs(fft(rawdata{i}(2, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
-            peaks{2} = get_peaks(abs(fft(rawdata{i}(3, 1:len), [], 2)), peak_num, 0.3) * 125/len * 60;
-            
-            peaks_best{1} = lastlabels(1);
-            peaks_best{2} = lastlabels(1);
-            for p = 1:2
-                for j = 1:peak_num
-                    if 50 < peaks{p}(j) && 180 > peaks{p}(j)
-                        peaks_best{p} = peaks{p}(j);
-                        break;
-                    end
-                end
-            end
-            out_label_win = (peaks_best{1} + peaks_best{2}) / 2;
-            lastlabels = circshift(lastlabels, [2, 1]);
-            lastlabels(1) = out_label_win;
-            out_label = [out_label; out_label_win];
-            target_label = [target_label; ground_truth{i}(win)];
-        end
-        
-        if peak_win_num < lastpredict_num
-            lastlabels(peak_win_num + 1: lastpredict_num) = mean(lastlabels(1:peak_win_num));
-        end
-        
-        
-        % for windows after 17th, we use prediction
-        win = peak_win_num + 1;
-        sig_part = get_sig_part(rawdata{i}(2:6, :), win); 
+        % iteration init
+        win = 1;
+        sig_part = get_sig_part(rawdata{i}(2:6, :), win);
         while size(sig_part, 2) == 1000
             
-            % for every window, we get a set of features for ONE label
-            feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
-            
-            if use_lastpredict
-                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+            % for the first several windows or the windows which are
+            % motionless, we get the peaks of them
+            if win <= peak_win_num %|| is_motionless(sig_part(3:5, :))
+                if win <= peak_win_num
+                    %head = 1;
+                    % for ssa test
+                    head = ((win - 1) * 250 + 1) - 1000;
+                    if (head < 1); head = 1; end;
+                    tail = win * 250 + 750;
+                else
+                    head = ((win - 1) * 250 + 1) - 1000;
+                    if (head < 1); head = 1; end;
+                    tail = win * 250 + 750;
+                end
+                len = tail - head + 1;
+                peak_num = 3;
+
+                % periodogram test
+    %             periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
+    %             periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
+    %             peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
+    %             peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
+
+    
+                
+    
+                
+                % fft original
+                % 1) SSA
+                [ppg1ssa,~,~] = my_ssa(rawdata{i}(2, head:tail), rawdata{i}(4:6,head:tail), 400, lastlabels(1));
+                [ppg2ssa,~,~] = my_ssa(rawdata{i}(3, head:tail), rawdata{i}(4:6,head:tail), 400, lastlabels(1));
+                
+                % 2) get fft peaks
+                %peaks{1} = get_peaks(abs(fft(rawdata{i}(2, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
+                %peaks{2} = get_peaks(abs(fft(rawdata{i}(3, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
+                peaks{1} = get_peaks(abs(fft(ppg1ssa, [], 2)), peak_num, 0.3) * 125/len * 60;
+                peaks{2} = get_peaks(abs(fft(ppg2ssa, [], 2)), peak_num, 0.3) * 125/len * 60;
+                
+                peaks_best{1} = lastlabels(1);
+                peaks_best{2} = lastlabels(1);
+                for p = 1:2
+                    for j = 1:peak_num
+                        if 50 < peaks{p}(j) && 180 > peaks{p}(j)
+                            peaks_best{p} = peaks{p}(j);
+                            break;
+                        end
+                    end
+                end
+                out_label_win1 = (peaks_best{1} + peaks_best{2}) / 2;
+                
+                
+                % learning
+                % for every window, we get a set of features for ONE label
+                feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
+
+                if use_lastpredict
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                else
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                end
+                [out_label_win2, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
+                
+                out_label_win = mean([out_label_win1, out_label_win2]);
             else
-                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                % for every window, we get a set of features for ONE label
+                feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
+
+                if use_lastpredict
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                else
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                end
+                [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             end
-            [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
             lastlabels(1) = out_label_win;
             out_label = [out_label; out_label_win];
-            target_label = [target_label; labe_gt];
+            target_label = [target_label; ground_truth{i}(win)];
             
-            % next window
+            % to the next iteration
             win = win + 1;
-            sig_part = get_sig_part(rawdata{i}(2:6, :), win); 
+            sig_part = get_sig_part(rawdata{i}(2:6, :), win);
         end
     end
     fclose(f);
@@ -115,4 +143,15 @@ function sig_part = get_sig_part(sig, win)
     else
         sig_part = [];
     end
+end
+
+
+
+function out_label_win = method_peak(sig_part, win)
+    
+end
+
+function out_label_win = method_learninig(sig_part, win)
+    
+
 end

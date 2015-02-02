@@ -44,7 +44,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
             
             % for the first several windows or the windows which are
             % motionless, we get the peaks of them
-            if win <= peak_win_num %|| is_motionless(sig_part(3:5, :))
+            if win <= peak_win_num || is_motionless(sig_part(3:5, :))
                 if win <= peak_win_num
                     %head = 1;
                     % for ssa test
@@ -59,27 +59,10 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 len = tail - head + 1;
                 peak_num = 3;
 
-                % periodogram test
-    %             periodogram1 = periodogram(rawdata{i}(2, 1:len), rectwin(len), len, 125);
-    %             periodogram2 = periodogram(rawdata{i}(3, 1:len), rectwin(len), len, 125);
-    %             peaks{1} = (get_peaks(periodogram1, peak_num, 0.3)-1) * 125/len * 60;
-    %             peaks{2} = (get_peaks(periodogram2, peak_num, 0.3)-1) * 125/len * 60;
 
-    
-                
-    
-                
-                % fft original
-                % 1) SSA
-                [ppg1ssa,~,~] = my_ssa(rawdata{i}(2, head:tail), rawdata{i}(4:6,head:tail), 400, lastlabels(1));
-                [ppg2ssa,~,~] = my_ssa(rawdata{i}(3, head:tail), rawdata{i}(4:6,head:tail), 400, lastlabels(1));
-                
-                % 2) get fft peaks
-                %peaks{1} = get_peaks(abs(fft(rawdata{i}(2, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
-                %peaks{2} = get_peaks(abs(fft(rawdata{i}(3, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
-                peaks{1} = get_peaks(abs(fft(ppg1ssa, [], 2)), peak_num, 0.3) * 125/len * 60;
-                peaks{2} = get_peaks(abs(fft(ppg2ssa, [], 2)), peak_num, 0.3) * 125/len * 60;
-                
+                % (1) get fft peaks
+                peaks{1} = get_peaks(abs(fft(rawdata{i}(2, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
+                peaks{2} = get_peaks(abs(fft(rawdata{i}(3, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
                 peaks_best{1} = lastlabels(1);
                 peaks_best{2} = lastlabels(1);
                 for p = 1:2
@@ -93,7 +76,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 out_label_win1 = (peaks_best{1} + peaks_best{2}) / 2;
                 
                 
-                % learning
+                % (2) learning
                 % for every window, we get a set of features for ONE label
                 feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
 
@@ -104,7 +87,8 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 end
                 [out_label_win2, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
                 
-                out_label_win = mean([out_label_win1, out_label_win2]);
+                % output the mean value from peak and prediction
+                out_label_win = (out_label_win1 + out_label_win2) / 2;
             else
                 % for every window, we get a set of features for ONE label
                 feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
@@ -116,6 +100,9 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 end
                 [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             end
+            % tracking
+            out_label_win = track(out_label_win, lastlabels(1));
+            
             lastlabels = circshift(lastlabels, [2, 1]); % dim:2 shift:1(to the right)
             lastlabels(1) = out_label_win;
             out_label = [out_label; out_label_win];
@@ -146,12 +133,12 @@ function sig_part = get_sig_part(sig, win)
 end
 
 
-
-function out_label_win = method_peak(sig_part, win)
-    
-end
-
-function out_label_win = method_learninig(sig_part, win)
-    
-
+function out_label_win = track(curr_label, last_label)
+    if curr_label - last_label > 10
+        out_label_win = last_label + 10;
+    elseif curr_label - last_label < -10
+        out_label_win = last_label - 10;
+    else
+        out_label_win = curr_label;
+    end
 end

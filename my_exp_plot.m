@@ -10,8 +10,8 @@ gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
 window_gau_sdtype = 'd2';
-use_lastpredict = 0;
-lastpredict_num = 5;
+use_lastpredict = 1;
+lastpredict_num = 20;
 past_acc_end = 0;
 acc_num = 0;
 peak_win_num = 12;
@@ -42,7 +42,7 @@ else       sep = '/';  end
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d_SSAonthefly_ml_ssa__%s', use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
+exp_name = sprintf('lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d__%s', use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf(['%s' sep '%s'], exp_root_dir, exp_name);
 tmp_dir = sprintf(['%s' sep 'tmp'], exp_dir);
@@ -55,7 +55,7 @@ resf = fopen(sprintf(['%s' sep 'results.txt'], exp_dir), 'w+');
 fprintf(1, 'Experiment starting: %s\n\n', exp_name);
 
 tic;
-for i = 13
+for i = 1:13
 
     fprintf(1, '\nTest %d\n', i);
     train_idxes = indexes_all( ~ismember( indexes_all, i ) );

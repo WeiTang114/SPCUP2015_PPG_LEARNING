@@ -6,7 +6,7 @@ function [bool] = is_motionless(acc3)
     bool = 0;
 
 % Method 1. "var" method    
-    norm2 = sqrt(acc3(1,:).^2 + acc3(2,:).^2 + acc3(3,:).^2);
+%     norm2 = sqrt(acc3(1,:).^2 + acc3(2,:).^2 + acc3(3,:).^2);
 %     var_o = var(norm2);
 %     if var(norm2) < VAR_THRES
 %         bool = true;
@@ -21,4 +21,9 @@ function [bool] = is_motionless(acc3)
     if sum(nn) < NORM_THRES
         bool = 1;
     end
+    
+    
+    
+    % v = var(norm2);
+    % v = sum(nn);
 end

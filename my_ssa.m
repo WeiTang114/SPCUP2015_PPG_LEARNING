@@ -127,8 +127,8 @@ function bool = acc_dominant(ppg, acc3, last_hr)
         % filter out the acc frequencies closed to the last HR
         freqs = freqs(~ismember(freqs, [last_hr_n-2, last_hr_n+2, last_hr_n-1, last_hr_n+1, last_hr_n]));
         if ismember(domif, freqs)
-            figure; subplot(2,1,1);plot(ppgf(1:100));
-            subplot(2,1,2); plot(accf(1:100));
+            %figure; subplot(2,1,1);plot(ppgf(1:100));
+            %subplot(2,1,2); plot(accf(1:100));
             bool = 1;
             close;
             break;

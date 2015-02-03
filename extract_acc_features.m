@@ -18,7 +18,7 @@ function [acc_features_o] = extract_acc_features( new )
 
     acc_features = {};
 
-    for i = 1:12
+    for i = 1:13
         window_num = floor( ...
                 (size(rawdata{i}, 2) - sample_rate * (window_sec - window_diff_sec)) /  ...
                 (sample_rate * window_diff_sec));

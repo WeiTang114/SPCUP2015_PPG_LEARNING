@@ -5,9 +5,9 @@ load('ground_truths.mat');
 indexes_all = 1:13;
 
 g0 = 0.00625;
-gammas = [g0/1.5^4 g0/1.5^3, g0/1.5^2, g0/1.5, g0, g0*1.5, g0*1.5^2, g0*1.5^3 g0*1.5^4];
+gammas = [g0*0.7, g0*0.8, g0*0.9, g0, g0*1.1, g0*1.2, g0*1.3, g0*1.4];
 
-for i = size(gammas,2)
+for i = 1:size(gammas,2)
     % parameters
     c = 2048;
     gamma = gammas(i);
@@ -88,7 +88,7 @@ for i = size(gammas,2)
 
 
         % plot
-        my_plot_func(fig_file, tgt_label, out_label_predict, out_label_track, out_label_smooth);
+        my_plot_func(fig_file, tgt_label, out_label_predict, aae_predict, out_label_track, aae_track, out_label_smooth, aae_smooth);
 
         % save results to file and screen
         for f = [1, resf]

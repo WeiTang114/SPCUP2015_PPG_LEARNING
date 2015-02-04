@@ -4,18 +4,17 @@ load('features.mat');
 load('ground_truths.mat');
 indexes_all = 1:13;
 
-g0 = 0.00625;
-gammas = [g0*0.7, g0*0.8, g0*0.9, g0, g0*1.1, g0*1.2, g0*1.3, g0*1.4];
+lastpredicts = [1]; %[3 5 10 15 20 25];
 
-for i = 1:size(gammas,2)
+for i = 1:size(lastpredicts,2)
     % parameters
     c = 2048;
-    gamma = gammas(i);
+    gamma = 0.00625;
     window_dist = 'uniform';  % 'gaussian'
     window_size = 15;
     window_gau_sdtype = 'd2';
-    use_lastpredict = 1;
-    lastpredict_num = 20;
+    use_lastpredict = 0;
+    lastpredict_num = lastpredicts(i);
     past_acc_end = 0;
     acc_num = 0;
     peak_win_num = 12;
@@ -48,7 +47,7 @@ for i = 1:size(gammas,2)
     %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
     %exp_name = sprintf('lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d__%s', use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
     %exp_name = sprintf('%f_%f__%s', c, gamma, date);
-    exp_name = sprintf('gamma%f__%s', gamma, date);
+    exp_name = sprintf('lastpredict%d__%s', lastpredict_num, date);
     exp_dir = sprintf(['%s' sep '%s'], exp_root_dir, exp_name);
     tmp_dir = sprintf(['%s' sep 'tmp'], exp_dir);
     mkdir(exp_dir);

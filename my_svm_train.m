@@ -14,7 +14,7 @@ function [model] = my_svm_train(training_file, c, gamma, indexes, lastpredict_nu
     labels = [];
     insts = [];
     for i = indexes
-        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, [1:2 8], 1, lastpredict_num, [], acc_features{i}, past_acc_end, acc_num, 0);
+        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, [1:2], 1, lastpredict_num, [], acc_features{i}, past_acc_end, acc_num, 0);
         labels = [labels; label];
         insts = [insts; inst];
     end

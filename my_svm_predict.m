@@ -83,7 +83,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 if use_lastpredict
                     [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 else
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 end
                 [out_label_win2, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
                 
@@ -96,7 +96,7 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 if use_lastpredict
                     [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 else
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
+                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 end
                 [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             end

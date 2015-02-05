@@ -83,7 +83,7 @@ for i = 1:13
 
 
     % plot
-    my_plot_func(fig_file, tgt_label, out_label_predict, out_label_track, out_label_smooth);
+    my_plot_func(fig_file, tgt_label, out_label_predict, aae_predict);
 
     % save results to file and screen
     for f = [1, resf]

@@ -30,7 +30,7 @@ function [] = my_plot_func(fig_file, topre_label, out_label, aae, varargin)
     end
     
     
-    x = linspace(0, 100, size(wint,2));
+    x = 1:size(wint,2);
     
     
     plotdata = cell(3 * (n_out_labels + 1), 1);

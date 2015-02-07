@@ -58,13 +58,17 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 end
                 len = tail - head + 1;
                 peak_num = 3;
-
-
+ 
                 % (1) get fft peaks
-                peaks{1} = get_peaks(abs(fft(rawdata{i}(2, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
-                peaks{2} = get_peaks(abs(fft(rawdata{i}(3, head:tail), [], 2)), peak_num, 0.3) * 125/len * 60;
+                ppgf = abs(fft(rawdata{i}(2:3, head:tail), [], 2));
+                f_mask = zeros(2,size(ppgf, 2));
+                f_mask(:, int8(0.75/(125/len))+1:int8(4/(125/len))+1) = 1;
+                ppgf = ppgf.*f_mask;
+                peaks{1} = get_peaks(ppgf(1,:), peak_num, 0.3) * 125/len * 60;
+                peaks{2} = get_peaks(ppgf(2,:), peak_num, 0.3) * 125/len * 60;
                 peaks_best{1} = lastlabels(1);
                 peaks_best{2} = lastlabels(1);
+
                 for p = 1:2
                     for j = 1:peak_num
                         if 50 < peaks{p}(j) && 180 > peaks{p}(j)

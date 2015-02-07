@@ -1,4 +1,4 @@
-function [model] = my_svm_train(training_file, c, gamma, indexes, lastpredict_num, past_acc_end, acc_num)
+function [model] = my_svm_train(training_file, c, gamma, indexes, use_lastpredict, lastpredict_num, past_acc_end, acc_num)
     if (nargin < 4)
         indexes = 1:12;
     end
@@ -14,7 +14,11 @@ function [model] = my_svm_train(training_file, c, gamma, indexes, lastpredict_nu
     labels = [];
     insts = [];
     for i = indexes
-        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, [1:2 8], 1, lastpredict_num, [], acc_features{i}, past_acc_end, acc_num, 0);
+        % choose features
+        use_features = [1:2];
+        if use_lastpredict; use_features = [use_features, 8]; end;
+        if acc_num > 0; use_features = [use_features, [21:25]]; end;
+        [label, inst] = features_to_svm_data(f, features{i}, ground_truth{i}, use_features, 1, lastpredict_num, [], acc_features{i}, past_acc_end, acc_num, 0);
         labels = [labels; label];
         insts = [insts; inst];
     end

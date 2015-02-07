@@ -5,7 +5,7 @@ load('ground_truths.mat');
 indexes_all = 1:13;
 
 % parameters
-c = 2048;
+c = 210;
 gamma = 0.00625;
 window_dist = 'uniform';  % 'gaussian'
 window_size = 15;
@@ -42,7 +42,7 @@ else       sep = '/';  end
 
 
 %exp name: <c>_<gamma>_t<thres>_<delta>_s<winsize>_<window_str>_<date>
-exp_name = sprintf('lp%d_%dNM_ppgonly__acc_12345_%d_%d_initpeak%d__%s', use_lastpredict, lastpredict_num, past_acc_end, acc_num, peak_win_num, date);
+exp_name = sprintf('all__%s', date);
 %exp_name = sprintf('%f_%f__%s', c, gamma, date);
 exp_dir = sprintf(['%s' sep '%s'], exp_root_dir, exp_name);
 tmp_dir = sprintf(['%s' sep 'tmp'], exp_dir);
@@ -66,7 +66,7 @@ for i = 1:13
 
     %train
     model = ...
-            my_svm_train(training_file, c, gamma, train_idxes, lastpredict_num, past_acc_end, acc_num);
+            my_svm_train(training_file, c, gamma, train_idxes, use_lastpredict, lastpredict_num, past_acc_end, acc_num);
 
     %predict
     [mse_predict, corr_predict, aae_predict, tgt_label, out_label_predict] = ...

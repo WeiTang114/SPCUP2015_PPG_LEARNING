@@ -84,11 +84,12 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 % for every window, we get a set of features for ONE label
                 feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
 
-                if use_lastpredict
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
-                else
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
-                end
+                % choose features
+                use_features = [1:2];
+                if use_lastpredict; use_features = [use_features, 8]; end;
+                if acc_num > 0; use_features = [use_features, [21:25]]; end;
+                
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), use_features, 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 [out_label_win2, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
                 
                 % output the mean value from peak and prediction
@@ -97,11 +98,12 @@ function [mse, corr_coeff, aae, target_label, out_label] = my_svm_predict(model,
                 % for every window, we get a set of features for ONE label
                 feature(1,:,:) = fft_feature_fly(sig_part, lastlabels(1));
 
-                if use_lastpredict
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
-                else
-                    [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), [1:2 8], 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
-                end
+                % choose features
+                use_features = [1:2];
+                if use_lastpredict; use_features = [use_features, 8]; end;
+                if acc_num > 0; use_features = [use_features, [21:25]]; end;
+                
+                [labe_gt, inst] = features_to_svm_data(f, feature, ground_truth{i}(win), use_features, 0, lastpredict_num, lastlabels, acc_features{i}, past_acc_end, acc_num, win);
                 [out_label_win, ~, ~] = svmpredict(labe_gt, inst, model, '-q');
             end
             % tracking
